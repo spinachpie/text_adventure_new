@@ -130,6 +130,26 @@ def Attack(context, item):
   else:
     context.Print("You should try to relax.")
 
+def Open(context, item):
+  if item.get("is_door?"):
+    if not item.get("is_open?"):
+      context.Print("You open the door.")
+      item["is_open?"] = True
+    else:
+      context.Print("The door is already open, you dimwit!")
+  else:
+    context.Print("You can't open that.")
+
+def Close(context, item):
+  if item.get("is_door?"):
+    if item.get("is_open?"):
+      context.Print("You close the door.")
+      item["is_open?"] = False
+    else:
+      context.Print("The door is already closed, you dweeb!")
+  else:
+    context.Print("You can't close that.")
+
 # Here is where you "bind" your action handler function to a specific action.
 def Register(context):
     actions = context.actions
@@ -145,4 +165,6 @@ def Register(context):
     actions.AddActionHandler("WAIT", Wait)
     actions.AddActionHandler("TYPE", Type)
     actions.AddActionHandler("TYPE_ON", TypeOn)
-    actions.AddActionHandler("ATTACK", Attack)
+    actions.AddActionHandler("ATTACK", Attack)   
+    actions.AddActionHandler("OPEN", Open)
+    actions.AddActionHandler("CLOSE", Close)

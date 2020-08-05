@@ -23,6 +23,8 @@
   "IN": { "words": ["IN", "ENTER"], "is_move?": true},
   "OUT": { "words": ["OUT", "EXIT"], "is_move?": true},
   "AGAIN": { "words": ["AGAIN", "G"]},
+  "OPEN": { "words": ["OPEN"], "requires_object?": true},
+  "CLOSE": { "words": ["CLOSE", "SHUT"], "requires_object?": true},
   "WAIT": { "words": ["WAIT", "Z"]},
   "OOPS": {"words": ["OOPS"]},
   "INSERT": { "words": ["INSERT", "PUT"], "requires_object?": true, "prepositions": ["IN", "INTO"]},
