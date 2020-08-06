@@ -27,11 +27,11 @@ def FrontDoorHandler(context, action, item, second_item):
   return False
   
 
-def EnterLookoutWalkway(context, first_time):
-    if first_time:
-        context.events.PrintBelow("You hear a faint moan coming from the tower to the south.")
-        context.events.PrintStringInNMoves("You hear that moaning sound again.", 3)
-    return False
+#def EnterGarden(context, first_time):
+ #   if first_time:
+  #      context.events.PrintBelow("You hear an owl hooting from the shed.")
+   #     context.events.PrintStringInNMoves("You hear that owl sound again.", 3)
+    #return False
 
 # Here is where you "bind" your item handler function to a specific item.
 def Register(context):

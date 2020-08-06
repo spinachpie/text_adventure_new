@@ -40,7 +40,7 @@ def Inventory(context):
 
 def Help(context):
     context.Print("This is a text adventure game.")
-    context.Print("Enter commands like \'GO NORTH\' or \'TAKE ROCK\' to tell the computer what you would like to do.")
+    context.Print("Enter commands like \'NORTH\' or \'TAKE ROCK\' to tell the computer what you would like to do.")
     context.Print("Most commands are either one or two words.")
     context.Print("For a full list of commands, type \'ACTIONS\'.")
 
