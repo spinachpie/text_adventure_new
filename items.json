@@ -6,14 +6,15 @@
     "words": ["COIN"],
     "adjectives":["SHINY", "SILVER"],
     "takeable?": true,
-    "init_loc": "BACKYARD"
+    "init_loc": ["VOID_BASEMENT"]
   },
   "TORCH": {
     "name": "torch",
     "long_desc": "flickering torch",
     "words": ["TORCH"],
     "takeable?": true,
-    "light_source?": true
+    "light_source?": true,
+    "init_loc": ["VOID_BASEMENT"]
   },
   "FRONT_DOOR": {
     "name": "front door",
@@ -24,10 +25,11 @@
     "is_open?": false,
     "is_door?": true
   },
-  "STREETLAMP": {
-    "name": "white streetlamp",
-    "words": ["LAMP", "STREETLAMP"],
-    "do_not_list?": true
+  "MASTER_BED": {
+    "name": "master bed",
+    "words": ["BED"],
+    "do_not_list?": true,
+    "init_loc": ["MASTER_BEDROOM"]
   },
   "JUKEBOX": {
     "name": "jukebox",
@@ -52,6 +54,22 @@
     "words": ["BAG"],
     "adjectives": ["PUNCHING"],
     "do_not_list?": true
+  },
+  "DONUT": {
+    "name": "donut",
+    "long_desc": "Plain Donut",
+    "words": ["DONUT"],
+    "takeable?": true,
+    "light_source?": false,
+    "init_loc": ["VOID_BASEMENT"]
+  },
+  "MUFFIN": {
+    "name": "muffin",
+    "long_desc": "blueberry muffin",
+    "words": ["MUFFIN"],
+    "takeable?": true,
+    "light_source?": false,
+    "init_loc": ["VOID_BASEMENT"]
   },
   "ALL": { "name": "All", "words": ["ALL"] },
   "NUMBER": { "name": "Number", "words": ["NUMBER"], "user_value": "" },
