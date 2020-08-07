@@ -6,7 +6,7 @@
     "words": ["COIN"],
     "adjectives":["SHINY", "SILVER"],
     "takeable?": true,
-    "init_loc": "ENTRANCE_HALL"
+    "init_loc": "BACKYARD"
   },
   "TORCH": {
     "name": "torch",

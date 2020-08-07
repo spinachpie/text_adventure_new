@@ -27,7 +27,8 @@
   "CLOSE": { "words": ["CLOSE", "SHUT"], "requires_object?": true},
   "WAIT": { "words": ["WAIT", "Z"]},
   "OOPS": {"words": ["OOPS"]},
+  "TWIGGY2": {"words": ["TWIGGY2"], "suppress_in_actions_list?": true},
   "INSERT": { "words": ["INSERT", "PUT"], "requires_object?": true, "prepositions": ["IN", "INTO"]},
-  "TYPE": { "words": ["TYPE"], "requires_number?": true },
+  "TYPE": { "words": ["TYPE"], "requires_number?": true, "suppress_in_actions_list?": true },
   "TYPE_ON": { "words": ["TYPE"], "requires_number?": true, "prepositions": ["ON", "INTO"]}
 }

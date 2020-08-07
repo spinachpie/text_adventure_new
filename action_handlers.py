@@ -72,6 +72,9 @@ def No(context):
 def Wait(context):
     context.Print("Time passes...")
 
+def Twiggy2(context):
+    context.locations.EnterRoom("THE_VOID")    
+
 def Type(context, item):
   if context.player.location == "DINER_INTERIOR":
     context.Print("(on the jukebox keyboard)")
@@ -168,3 +171,4 @@ def Register(context):
     actions.AddActionHandler("ATTACK", Attack)   
     actions.AddActionHandler("OPEN", Open)
     actions.AddActionHandler("CLOSE", Close)
+    actions.AddActionHandler("TWIGGY2", Twiggy2)
