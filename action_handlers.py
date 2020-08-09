@@ -1,3 +1,4 @@
+
 ### THIS FILE CONTAINS ACTION HANDLERS FOR YOUR ACTIONS ###
 
 # To add a new action handler, first create a function for your action
@@ -5,8 +6,26 @@
 # Unlike location or item handlers, note that if you define an action handler, you NEED
 #  to handle every user input
 #
+# Different types of actions get different parameters:
+#   * one-word actions (e.g. INVENTORY) just get passed context.
+#   * two-word actions (e.g. OPEN) and three-word actions (e.g. TURN ON) get passed context and a single item object.
+#   * four word actions (e.g. PUT ITEM IN ITEM) get passed context and two objects
+
 # Ideally, these action handlers are generic and don't reference specific items or locations.
 # But that's up to you...
+
+# NOTES ON ACTIONS.JSON
+#       "words" : a list containing all words for the action
+#       "requires_object?" : true if the item needs an object (required for all 2-, 3-, and 4-word actions)
+#       "prepositions" : list containing all prepositions associated with the action (required for 3- and 4-word actions)
+#                   -- note that prepositions are key for disambiguating between actions with overlapping words
+#                       (e.g. "PUT IN" vs "PUT ON").
+#                   -- You can't have two actions with overlapping words AND overlapping prepositions
+#       "no_second_item?" : set to true for items with prepositions but only one item (e.g. TURN ON ITEM)
+#                   -- this distinguishes 3-word actions from 4-word actions
+#       "is_move?" : true if this is a movement action (always one word)
+#       "suports_all?" : true if the action supports the ALL object (e.g. TAKE ALL)
+#       "suppress_in_actions_list?" : true if you don't want this action to show up when player types ACTIONS
 
 def Get(context, item):
     if item["key"] == "ALL":
