@@ -13,20 +13,6 @@
 #  you are adding an enter handler or when-here handler.
 # ERIKWUZHERE
 
-
-#FRONT DOOR door block
-def FrontDoorHandler(context, action, item, second_item):
-  if context.player.location == "OUTSIDE_MANOR":
-    if (action["key"] in ["IN","NORTH"]) and not context.items["FRONT_DOOR"].get("is_open?"):
-      context.Print("The front door is closed.")
-      return True
-  if context.player.location == "ENTRANCE_HALL":
-    if (action["key"] in ["OUT","SOUTH"]) and not context.items["FRONT_DOOR"].get("is_open?"):
-      context.Print("The front door is closed.")
-      return True
-  return False
-  
-
 #def EnterGarden(context, first_time):
  #   if first_time:
   #      context.events.PrintBelow("You hear an owl hooting from the shed.")
@@ -37,5 +23,3 @@ def FrontDoorHandler(context, action, item, second_item):
 def Register(context):
     locations = context.locations
     #locations.AddEnterHandler("LOOKOUT_WALKWAY", EnterLookoutWalkway)
-    locations.AddWhenHereHandler("OUTSIDE_MANOR", FrontDoorHandler)
-    locations.AddWhenHereHandler("ENTRANCE_HALL", FrontDoorHandler)

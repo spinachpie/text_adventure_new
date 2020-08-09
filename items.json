@@ -1,21 +1,4 @@
 {
-  "COIN": {
-    "name": "coin",
-    "long_desc": "shiny silver coin",
-    "examine_string": "This silver coin looks old, and has the picture of a goose on it.",
-    "words": ["COIN"],
-    "adjectives":["SHINY", "SILVER"],
-    "takeable?": true,
-    "init_loc": ["VOID_BASEMENT"]
-  },
-  "TORCH": {
-    "name": "torch",
-    "long_desc": "flickering torch",
-    "words": ["TORCH"],
-    "takeable?": true,
-    "light_source?": true,
-    "init_loc": ["VOID_BASEMENT"]
-  },
   "FRONT_DOOR": {
     "name": "front door",
     "words": ["DOOR"],
@@ -23,7 +6,7 @@
     "init_loc": ["ENTRANCE_HALL","OUTSIDE_MANOR"],
     "do_not_list?": true,
     "is_open?": false,
-    "is_door?": true
+    "openable?": true
   },
   "MASTER_BED": {
     "name": "master bed",
@@ -31,47 +14,22 @@
     "do_not_list?": true,
     "init_loc": ["MASTER_BEDROOM"]
   },
-  "JUKEBOX": {
-    "name": "jukebox",
-    "words": ["JUKEBOX"],
-    "do_not_list?": true
-  },
-  "COINSLOT": {
-    "name": "coin slot",
-    "words": ["SLOT", "COINSLOT"],
-    "adjectives": ["COIN"],
-    "do_not_list?": true
-  },
-  "KEYPAD" : {
-    "name": "jukebox keypad",
-    "words": ["KEYPAD", "PAD"],
-    "adjectives": ["JUKEBOX", "NUMERIC"],
-    "do_not_list?": true,
-    "awaiting_input?" : false
-  },
-  "PUNCHING_BAG": {
-    "name": "punching bag",
-    "words": ["BAG"],
-    "adjectives": ["PUNCHING"],
-    "do_not_list?": true
-  },
   "DONUT": {
-    "name": "donut",
-    "long_desc": "Plain Donut",
+    "name": "plain donut",
     "words": ["DONUT"],
+    "adjectives": ["PLAIN"],
     "takeable?": true,
-    "light_source?": false,
     "init_loc": ["VOID_BASEMENT"]
   },
   "MUFFIN": {
-    "name": "muffin",
+    "name": "blueberry muffin",
     "long_desc": "blueberry muffin",
     "words": ["MUFFIN"],
+    "adjectives": ["BLUEBERRY"],
     "takeable?": true,
-    "light_source?": false,
     "init_loc": ["VOID_BASEMENT"]
   },
   "ALL": { "name": "All", "words": ["ALL"] },
-  "NUMBER": { "name": "Number", "words": ["NUMBER"], "user_value": "" },
-  "IT": {"name": "It", "words": ["IT"]}
+  "NUMBER": { "name": "Number", "words": ["NUMBER"] },
+  "IT": {"name": "it", "words": ["IT"]}
 }

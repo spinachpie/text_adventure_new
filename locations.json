@@ -4,7 +4,7 @@
     "long_desc": "This is the entrance to  the large, spooky manor. The hall continues to the north, and there are rooms to the east and the west. To the south is the front door. Stairs lead upwards.",
     "dark?": false,
     "north":"",
-    "south": "OUTSIDE_MANOR",
+    "south": "OUTSIDE_MANOR|FRONT_DOOR",
     "east": "DINING_ROOM",
     "west": "",
     "northeast": "",
@@ -14,13 +14,13 @@
     "up": "",
     "down": "",
     "in": "",
-    "out": "OUTSIDE_MANOR"
+    "out": "OUTSIDE_MANOR|FRONT_DOOR"
   },
   "OUTSIDE_MANOR": {
     "brief_desc": "Front Gate",
     "long_desc": "You are right outside the manor. To the North, a door leads into the manor. To the northeast, a path winds along the outside of the building. You can also cross the street to the south.",
     "dark?": false,
-    "north":"ENTRANCE_HALL",
+    "north":"ENTRANCE_HALL|FRONT_DOOR",
     "south": "",
     "east": "",
     "west": "",
@@ -30,7 +30,7 @@
     "southwest": "",
     "up": "",
     "down": "",
-    "in": "ENTRANCE_HALL",
+    "in": "ENTRANCE_HALL|FRONT_DOOR",
     "out": ""
   },
   "GARDEN": {
