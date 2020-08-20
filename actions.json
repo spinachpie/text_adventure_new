@@ -5,10 +5,11 @@
   "YES" : {"words": ["YES","Y"], "suppress_in_actions_list?": true },
   "NO" : {"words": ["NO"], "suppress_in_actions_list?": true },
   "GET": { "words": ["GET", "TAKE"], "requires_object?": true, "supports_all?": true },
+  "PICK_UP": { "words": ["PICK"], "requires_object?": true, "prepositions" : ["UP"], "no_second_item?": true, "mimic": "GET" },
   "DROP": { "words": ["DROP", "LEAVE", "TOSS"], "requires_object?": true, "supports_all?": true },
   "ATTACK": { "words": ["ATTACK", "FIGHT", "KILL", "PUNCH", "HIT", "KICK"], "requires_object?": true},
   "EXAMINE": { "words": ["EXAMINE", "X"], "requires_object?": true },
-  "OPEN": { "words": ["OPEN"], "requires_object?": true },
+  "LOOK_AT": { "words": ["LOOK", "L"], "requires_object?": true, "prepositions" : ["AT"], "no_second_item?": true, "mimic": "EXAMINE" },  "OPEN": { "words": ["OPEN"], "requires_object?": true },
   "CLOSE": { "words": ["CLOSE", "SHUT"], "requires_object?": true },
   "INVENTORY": { "words": ["INVENTORY", "I", "INV"] },
   "LOOK": { "words": ["LOOK", "L"] },
@@ -33,6 +34,10 @@
   "TYPE_ON": { "words": ["TYPE"], "requires_object?": true, "prepositions": ["ON", "INTO"]},
   "TURN_ON": { "words": ["TURN", "SWITCH"], "requires_object?": true, "prepositions" : ["ON"], "no_second_item?": true },
   "TURN_OFF": { "words": ["TURN", "SWITCH"], "requires_object?": true, "prepositions" : ["OFF"], "no_second_item?": true },
+  "LIGHT": { "words": ["LIGHT"], "requires_object?": true},
+  "LIGHT_WITH": { "words": ["LIGHT"], "requires_object?": true, "prepositions" : ["WITH"]},
+  "EXTINGUISH": { "words": ["EXTINGUISH"], "requires_object?": true},
+  "BLOW_OUT": { "words": ["BLOW"], "requires_object?": true, "prepositions" : ["OUT"], "no_second_item?": true, "mimic": "EXTINGUISH" },
   "TWIGGY2": {"words": ["TWIGGY2"], "suppress_in_actions_list?": true},
   "DEBUG" : {"words": ["DEBUG"], "suppress_in_actions_list?": true }
 }

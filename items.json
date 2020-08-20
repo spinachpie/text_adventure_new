@@ -8,18 +8,28 @@
     "is_open?": false,
     "openable?": true
   },
+  "TRAPDOOR": {
+    "name": "trapdoor",
+    "words": ["DOOR", "TRAPDOOR"],
+    "adjectives": ["TRAP"],
+    "init_loc": ["STAFF_BEDROOM","BUNKER_HALLWAY"],
+    "do_not_list?": true,
+    "is_open?": false,
+    "openable?": true
+  },
   "MASTER_BED": {
     "name": "master bed",
     "words": ["BED"],
+    "adjectives": ["MASTER"],
     "do_not_list?": true,
-    "init_loc": ["MASTER_BEDROOM"]
+    "init_loc": "MASTER_BEDROOM"
   },
   "DONUT": {
-    "name": "plain donut",
+    "name": "jelly donut",
     "words": ["DONUT"],
-    "adjectives": ["PLAIN"],
+    "adjectives": ["JELLY"],
     "takeable?": true,
-    "init_loc": ["VOID_BASEMENT"]
+    "init_loc": "VOID_BASEMENT"
   },
   "MUFFIN": {
     "name": "blueberry muffin",
@@ -27,7 +37,49 @@
     "words": ["MUFFIN"],
     "adjectives": ["BLUEBERRY"],
     "takeable?": true,
-    "init_loc": ["VOID_BASEMENT"]
+    "init_loc": "VOID_UPPER"
+  },
+  "APPLE": {
+    "name": "apple",
+    "long_desc": "green apple",
+    "words": ["APPLE"],
+    "adjectives": ["GREEN"],
+    "takeable?": true,
+    "init_loc": "LUNCHBOX"
+  },
+  "MATCHES": {
+    "name": "matchbox",
+    "words": ["BOX", "MATCHES", "MATCH", "MATCHBOX"],
+    "adjectives": ["MATCH"],
+    "takeable?": true,
+    "init_loc": "LUNCHBOX"
+  },
+  "CANDLE": {
+    "name": "wax candle",
+    "words": ["CANDLE"],
+    "adjectives": ["WAX"],
+    "takeable?": true,
+    "init_loc": "VOID_UPPER"
+  },
+  "BACKPACK": {
+    "name": "backpack",
+    "long_desc": "old leather backpack",
+    "words": ["PACK", "BACKPACK"],
+    "adjectives":["BACK", "OLD", "LEATHER"],
+    "takeable?": true,
+    "openable?": true,
+    "is_container?": true,
+    "init_loc": "PLAYER"
+  },
+  "LUNCHBOX": {
+    "name": "lunchbox",
+    "long_desc": "old tin spiderman lunchbox",
+    "words": ["BOX", "LUNCHBOX"],
+    "adjectives":["SPIDERMAN", "TIN", "OLD"],
+    "takeable?": true,
+    "openable?": true,
+    "is_container?": true,
+    "init_loc": "BACKPACK"
   },
   "ALL": { "name": "All", "words": ["ALL"] },
   "NUMBER": { "name": "Number", "words": ["NUMBER"] },

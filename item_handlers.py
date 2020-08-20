@@ -156,6 +156,43 @@ def Flashlight(context, action, other_item, item_is_secondary):
         return True
     return False
 
+def Matches(context, action, other_item, item_is_secondary):
+    if (action["key"] == "LIGHT"):
+        context.Print("You light one of the matches, and it burns out after a couple seconds.")
+        return True
+
+def Candle(context, action, other_item, item_is_secondary):
+    if (action["key"] == "LIGHT") or ((action["key"] in "LIGHT_WITH") and (other_item["key"] == "MATCHES") and not item_is_secondary):
+        if context.items["CANDLE"].get("light_source?"):
+            context.Print("It's already lit.")
+        elif not "MATCHES" in context.player.inventory:
+            if not context.items.TestIfItemIsHere("MATCHES"):
+                context.Print("You don't have anything to light it with.")
+            else:
+                context.Print("You need to be holding a match.")
+        else:
+            context.items["CANDLE"]["light_source?"] = True
+            context.Print("You light the candle.")
+        return True
+    if action["key"] == "EXTINGUISH":
+        if context.items["CANDLE"].get("light_source?"):
+            context.items["CANDLE"]["light_source?"] = False
+            context.Print("You blow out the candle.")
+        else:
+            context.Print("The candle isn't lit.")
+        return True
+    if action["key"] == "EXAMINE":
+        printstr = "The ordinary wax candle is "
+        if context.items["CANDLE"].get("light_source?"):
+            printstr += "lit"
+        else:
+            printstr += "not lit"
+        context.Print(printstr + ".")
+        return True
+    return False
+
+
+
 # Here is where you "bind" your item handler function to a specific item.
 def Register(context):
     items = context.items
@@ -165,3 +202,5 @@ def Register(context):
     # items.AddItemHandler("PUNCHING_BAG", PunchingBag)
     # items.AddItemHandler("NUMBER", Number)
     # items.AddItemHandler("FLASHLIGHT", Flashlight)
+    items.AddItemHandler("CANDLE", Candle)
+    items.AddItemHandler("MATCHES", Matches)
