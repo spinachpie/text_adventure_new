@@ -8,6 +8,15 @@
     "is_open?": false,
     "openable?": true
   },
+  "BEDROOM_DOOR": {
+    "name": "bedroom door",
+    "words": ["DOOR"],
+    "adjectives": ["MASTER", "BEDROOM"],
+    "init_loc": ["UPSTAIRS_HALLWAY","MASTER_BEDROOM"],
+    "do_not_list?": true,
+    "is_open?": false,
+    "openable?": true
+  },
   "TRAPDOOR": {
     "name": "trapdoor",
     "words": ["DOOR", "TRAPDOOR"],
@@ -37,7 +46,7 @@
     "words": ["MUFFIN"],
     "adjectives": ["BLUEBERRY"],
     "takeable?": true,
-    "init_loc": "VOID_UPPER"
+    "init_loc": "LUNCHBOX"
   },
   "APPLE": {
     "name": "apple",
@@ -52,14 +61,29 @@
     "words": ["BOX", "MATCHES", "MATCH", "MATCHBOX"],
     "adjectives": ["MATCH"],
     "takeable?": true,
-    "init_loc": "LUNCHBOX"
+    "init_loc": "KITCHEN"
   },
   "CANDLE": {
     "name": "wax candle",
     "words": ["CANDLE"],
     "adjectives": ["WAX"],
     "takeable?": true,
-    "init_loc": "VOID_UPPER"
+    "init_loc": "MASTER_BEDROOM"
+  },
+  "FLASHLIGHT": {
+    "name": "flashlight",
+    "words": ["FLASHLIGHT", "LIGHT"],
+    "adjectives": ["FLASH"],
+    "takeable?": true,
+    "init_loc": "BACKPACK"
+  },
+  "DUCKY": {
+    "name": "ruber ducky",
+    "long_desc": "small yellow rubber ducky",
+    "words": ["DUCK", "DUCKY"],
+    "adjectives": ["RUBBER"],
+    "takeable?": true,
+    "init_loc": "LIVING_BATHROOM"
   },
   "BACKPACK": {
     "name": "backpack",
