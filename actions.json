@@ -39,5 +39,6 @@
   "EXTINGUISH": { "words": ["EXTINGUISH"], "requires_object?": true},
   "BLOW_OUT": { "words": ["BLOW"], "requires_object?": true, "prepositions" : ["OUT"], "no_second_item?": true, "mimic": "EXTINGUISH" },
   "TWIGGY2": {"words": ["TWIGGY2"], "suppress_in_actions_list?": true},
-  "DEBUG" : {"words": ["DEBUG"], "suppress_in_actions_list?": true }
+  "DEBUG" : {"words": ["DEBUG"], "suppress_in_actions_list?": true },
+  "EAT": { "words": ["EAT"], "requires_object?": true }
 }

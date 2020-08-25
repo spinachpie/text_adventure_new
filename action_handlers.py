@@ -68,6 +68,20 @@ def Open(context, item):
   else:
     context.Print("You can't open that.")
 
+def Eat(context, item):
+    if item.get("is_food?"):
+        if context.player.hunger_level >= 75:
+            context.PrintItemInString("You eat @ and feel less hungry.", item)
+            context.player.hunger_level -= 100
+            #need move item
+        else:
+            context.Print("You aren't hungry at the moment.")
+    else:
+        context.Print("Didn't your parents teach you not to put things in your mouth!?")
+
+
+
+
 def Close(context, item):
   if item.get("openable?"):
     if item.get("is_open?"):
@@ -204,4 +218,5 @@ def Register(context):
     actions.AddActionHandler("DEBUG", Debug)
     actions.AddActionHandler("TURN_ON", TurnOn)
     actions.AddActionHandler("TURN_OFF", TurnOff)
-    actions.AddActionHandler("TWIGGY2", Twiggy2) 
+    actions.AddActionHandler("TWIGGY2", Twiggy2)
+    actions.AddActionHandler("EAT", Eat)

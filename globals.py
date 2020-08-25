@@ -14,6 +14,8 @@ def InitialSetup(context):
 
 def CheckHunger(context):
   context.events.CreateEventInNMoves(CheckHunger, 1)
+  if context.state.debug:
+    context.Print("Hunger: " + str(context.player.hunger_level))
   context.player.hunger_level += 1
   if context.player.hunger_level == 101:
     context.Print("You're starting to feel a little hungry.")

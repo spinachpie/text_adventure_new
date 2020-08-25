@@ -38,7 +38,8 @@
     "words": ["DONUT"],
     "adjectives": ["JELLY"],
     "takeable?": true,
-    "init_loc": "VOID_BASEMENT"
+    "init_loc": "VOID_BASEMENT",
+    "is_food?": true
   },
   "MUFFIN": {
     "name": "blueberry muffin",
@@ -46,7 +47,8 @@
     "words": ["MUFFIN"],
     "adjectives": ["BLUEBERRY"],
     "takeable?": true,
-    "init_loc": "LUNCHBOX"
+    "init_loc": "LUNCHBOX",
+    "is_food?": true
   },
   "APPLE": {
     "name": "apple",
@@ -54,7 +56,8 @@
     "words": ["APPLE"],
     "adjectives": ["GREEN"],
     "takeable?": true,
-    "init_loc": "LUNCHBOX"
+    "init_loc": "LUNCHBOX",
+    "is_food?": true
   },
   "MATCHES": {
     "name": "matchbox",
