@@ -53,15 +53,45 @@ def DinerEnter(context, first_time):
         context.events.PrintBelow("As you enter, you notice flashing lights on the jukebox, as if it's trying to get your attention.")
     return False
 
-def DinerWhenHere(context, action, item1, item2):
-    if (action["key"] == "DANCE") and (context.items["JUKEBOX"].get("playing?")):
-        if context.items["JUKEBOX"]["song_choice"] == "001":
-            context.Print("Wow! You had forgotten how incredibly danceable Aha's brand of Scandinavian pop was! You are really getting down!")
-        elif context.items["JUKEBOX"]["song_choice"] == "001":
-            context.Print("Wow! You had forgotten how incredibly danceable Aha's brand of Scandinavian pop was! You are really getting down!")
+def Elevator1WhenHere(context, action, item1, item2):
+    if action["key"] == "OUT":
+        if context.items["ELEVATOR_DOOR"].get("is_open?"):
+            if context.locations["ELEVATOR1"]["elevator_level"] == 7:
+                context.locations.EnterRoom("VOID_UPPER")
+            elif context.locations["ELEVATOR1"]["elevator_level"] == 4:
+                context.locations.EnterRoom("THE_VOID")
+            elif context.locations["ELEVATOR1"]["elevator_level"] == 1:
+                context.locations.EnterRoom("VOID_BASEMENT")
         else:
-            context.Print("You close your eyes and rock out to the music from the jukebox!")
-        return true
+            context.Print("The elevator door is closed.")
+        return True
+    return False
+
+def VoidUpperWhenHere(context, action, item1, item2):
+    if action["key"] == "IN":
+        if context.items["ELEVATOR_DOOR"].get("is_open?") and (context.locations["ELEVATOR1"]["elevator_level"] == 7):
+            context.locations.EnterRoom("ELEVATOR1")
+        else:
+            context.Print("The elevator door is closed.")
+        return True
+    return False
+
+def VoidWhenHere(context, action, item1, item2):
+    if action["key"] == "IN":
+        if context.items["ELEVATOR_DOOR"].get("is_open?") and (context.locations["ELEVATOR1"]["elevator_level"] == 4):
+            context.locations.EnterRoom("ELEVATOR1")
+        else:
+            context.Print("The elevator door is closed.")
+        return True
+    return False
+
+def VoidBasementWhenHere(context, action, item1, item2):
+    if action["key"] == "IN":
+        if context.items["ELEVATOR_DOOR"].get("is_open?") and (context.locations["ELEVATOR1"]["elevator_level"] == 1):
+            context.locations.EnterRoom("ELEVATOR1")
+        else:
+            context.Print("The elevator door is closed.")
+        return True
     return False
 
 def DinerLook(context):
@@ -76,5 +106,8 @@ def DinerLook(context):
 def Register(context):
     locations = context.locations
     # locations.AddEnterHandler("DINER_INTERIOR", DinerEnter)
-    # locations.AddWhenHereHandler("DINER_INTERIOR", DinerWhenHere)
+    locations.AddWhenHereHandler("ELEVATOR1", Elevator1WhenHere)
+    locations.AddWhenHereHandler("VOID_UPPER", VoidUpperWhenHere)
+    locations.AddWhenHereHandler("THE_VOID", VoidWhenHere)
+    locations.AddWhenHereHandler("VOID_BASEMENT", VoidBasementWhenHere)
     # locations.AddLookHandler("DINER_INTERIOR", DinerLook)

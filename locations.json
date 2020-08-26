@@ -406,5 +406,23 @@
     "down": "VOID_BASEMENT",
     "in": "THE_VOID",
     "out": "OUTSIDE_MANOR"
+  },
+  "ELEVATOR1": {
+    "brief_desc": "Elevator",
+    "long_desc": "This is a shiny steel elevator.",
+    "dark?": false,
+    "north": "",
+    "south": "",
+    "east": "",
+    "west": "",
+    "northeast": "",
+    "northwest": "",
+    "southeast": "",
+    "southwest": "",
+    "up": "",
+    "down": "",
+    "in": "",
+    "out": "",
+    "elevator_level": 7
   }
 }

@@ -191,7 +191,56 @@ def Candle(context, action, other_item, item_is_secondary):
         return True
     return False
 
+def MoveElevator(context):
+    level = context.locations["ELEVATOR1"].get("elevator_level")
+    dest = context.locations["ELEVATOR1"].get("elevator_destination")
+    if dest > level:
+        context.locations["ELEVATOR1"]["elevator_level"] += 1
+    elif dest < level:
+        context.locations["ELEVATOR1"]["elevator_level"] -= 1
+    if dest == level:
+        context.items["ELEVATOR_DOOR"]["is_open?"] = True
+        if (context.player.location == "ELEVATOR1") or ((context.player.location == "VOID_UPPER") and (level == 7)) or ((context.player.location == "THE_VOID") and (level == 4)) or ((context.player.location == "VOID_BASEMENT") and (level == 1)):
+            context.Print("The elevator door opens with a whoosh.")
+        context.locations["ELEVATOR1"]["elevator_destination"] = None
+    else:
+        context.events.CreateEventInNMoves(MoveElevator, 1)
 
+def PressElevatorButton(context, this_floor):
+    level = context.locations["ELEVATOR1"].get("elevator_level")
+    dest = context.locations["ELEVATOR1"].get("elevator_destination")
+    if level == this_floor:
+        if context.items["ELEVATOR_DOOR"].get("is_open?"):
+            context.Print("The elevator is already here.")
+        else:
+            context.Print("The elevator door opens with a whoosh.")
+            context.items["ELEVATOR_DOOR"]["is_open?"] = True
+    elif dest == this_floor:
+        context.Print("The call button is already lit.")
+    else:
+        context.items["ELEVATOR_DOOR"]["is_open?"] = False
+        context.Print("The elevator call button lights up and there is a humming noise from behind it.")
+        if not dest:
+            context.events.CreateEventInNMoves(MoveElevator, 1)
+        context.locations["ELEVATOR1"]["elevator_destination"] = this_floor
+
+def CallButton1(context, action, other_item, item_is_secondary):
+    if action["key"] == "PUSH":
+        PressElevatorButton(context, 1)
+        return True
+    return False
+
+def CallButton2(context, action, other_item, item_is_secondary):
+    if action["key"] == "PUSH":
+        PressElevatorButton(context, 4)
+        return True
+    return False
+
+def CallButton3(context, action, other_item, item_is_secondary):
+    if action["key"] == "PUSH":
+        PressElevatorButton(context, 7)
+        return True
+    return False
 
 # Here is where you "bind" your item handler function to a specific item.
 def Register(context):
@@ -204,3 +253,6 @@ def Register(context):
     # items.AddItemHandler("FLASHLIGHT", Flashlight)
     items.AddItemHandler("CANDLE", Candle)
     items.AddItemHandler("MATCHES", Matches)
+    items.AddItemHandler("CALL_BUTTON_1", CallButton1)
+    items.AddItemHandler("CALL_BUTTON_2", CallButton2)
+    items.AddItemHandler("CALL_BUTTON_3", CallButton3)

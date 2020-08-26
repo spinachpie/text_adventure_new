@@ -27,3 +27,4 @@ def CheckHunger(context):
     context.Print("Gandhi survived without food for 21 days. You're not Gandhi. You're about to starve.")
   if context.player.hunger_level == 200:
     context.Print("You die from hunger. Better luck next time.")
+    context.player.Kill()

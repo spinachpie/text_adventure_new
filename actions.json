@@ -2,9 +2,11 @@
   "HELP" : { "words": ["HELP", "?"] },
   "ACTIONS" : { "words": ["ACTIONS", "VERBS", "COMMANDS"] },
   "QUIT" : {"words" : ["QUIT", "Q"]},
+  "RESTART" : {"words" : ["RESTART"]},
   "YES" : {"words": ["YES","Y"], "suppress_in_actions_list?": true },
   "NO" : {"words": ["NO"], "suppress_in_actions_list?": true },
   "GET": { "words": ["GET", "TAKE"], "requires_object?": true, "supports_all?": true },
+  "GET_FROM": { "words": ["GET", "TAKE"], "requires_object?": true, "supports_all?": true, "prepositions" : ["FROM"]},
   "PICK_UP": { "words": ["PICK"], "requires_object?": true, "prepositions" : ["UP"], "no_second_item?": true, "mimic": "GET" },
   "DROP": { "words": ["DROP", "LEAVE", "TOSS"], "requires_object?": true, "supports_all?": true },
   "ATTACK": { "words": ["ATTACK", "FIGHT", "KILL", "PUNCH", "HIT", "KICK"], "requires_object?": true},
@@ -29,7 +31,7 @@
   "WAIT": { "words": ["WAIT", "Z"]},
   "OOPS": {"words": ["OOPS"]},
   "INSERT": { "words": ["INSERT"], "requires_object?": true, "suppress_in_actions_list?": true},
-  "PUT_INTO": { "words": ["PUT","INSERT"], "requires_object?": true, "prepositions": ["INTO","IN","INSIDE"]},
+  "PUT_INTO": { "words": ["PUT","INSERT"], "requires_object?": true, "prepositions": ["INTO","IN","INSIDE"], "supports_all?": true},
   "TYPE": { "words": ["TYPE"], "requires_object?": true, "suppress_in_actions_list?": true },
   "TYPE_ON": { "words": ["TYPE"], "requires_object?": true, "prepositions": ["ON", "INTO"]},
   "TURN_ON": { "words": ["TURN", "SWITCH"], "requires_object?": true, "prepositions" : ["ON"], "no_second_item?": true },
@@ -40,5 +42,6 @@
   "BLOW_OUT": { "words": ["BLOW"], "requires_object?": true, "prepositions" : ["OUT"], "no_second_item?": true, "mimic": "EXTINGUISH" },
   "TWIGGY2": {"words": ["TWIGGY2"], "suppress_in_actions_list?": true},
   "DEBUG" : {"words": ["DEBUG"], "suppress_in_actions_list?": true },
-  "EAT": { "words": ["EAT"], "requires_object?": true }
+  "EAT": { "words": ["EAT"], "requires_object?": true },
+  "PUSH": { "words": ["PUSH", "PRESS"], "requires_object?": true }
 }

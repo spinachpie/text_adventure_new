@@ -108,7 +108,56 @@
     "is_container?": true,
     "init_loc": "BACKPACK"
   },
-  "ALL": { "name": "All", "words": ["ALL"] },
+  "ONE_BUTTON": {
+    "name": "one button",
+    "words": ["BUTTON"],
+    "adjectives":["ONE"],
+    "init_loc": "ELEVATOR1",
+    "do_not_list?": true
+  },
+  "TWO_BUTTON": {
+    "name": "two button",
+    "words": ["BUTTON"],
+    "adjectives":["TWO"],
+    "init_loc": "ELEVATOR1",
+    "do_not_list?": true
+  },
+  "THREE_BUTTON": {
+    "name": "three button",
+    "words": ["BUTTON"],
+    "adjectives":["THREE"],
+    "init_loc": "ELEVATOR1",
+    "do_not_list?": true
+  },
+  "CALL_BUTTON_3": {
+    "name": "elevator call button",
+    "words": ["BUTTON"],
+    "adjectives":["CALL"],
+    "init_loc": "VOID_UPPER",
+    "do_not_list?": true
+  },
+  "CALL_BUTTON_2": {
+    "name": "elevator call button",
+    "words": ["BUTTON"],
+    "adjectives":["CALL"],
+    "init_loc": "THE_VOID",
+    "do_not_list?": true
+  },
+  "CALL_BUTTON_1": {
+    "name": "elevator call button",
+    "words": ["BUTTON"],
+    "adjectives":["CALL"],
+    "init_loc": "VOID_BASEMENT",
+    "do_not_list?": true
+  },
+  "ELEVATOR_DOOR": {
+    "name": "elevator door",
+    "words": ["DOOR"],
+    "adjectives":["ELEVATOR"],
+    "init_loc": ["VOID_BASEMENT","THE_VOID","VOID_UPPER","ELEVATOR1"],
+    "do_not_list?": true
+  },
+  "ALL": { "name": "All", "words": ["ALL"], "no_article?": true },
   "NUMBER": { "name": "Number", "words": ["NUMBER"] },
   "IT": {"name": "it", "words": ["IT"]}
 }
