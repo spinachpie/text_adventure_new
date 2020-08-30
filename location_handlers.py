@@ -67,8 +67,8 @@ def Elevator1WhenHere(context, action, item1, item2):
         return True
     return False
 
-def VoidUpperWhenHere(context, action, item1, item2):
-    if action["key"] == ("IN", "EAST"):
+def ElevatorTopWhenHere(context, action, item1, item2):
+    if action["key"] in ["IN", "EAST"]:
         if context.items["ELEVATOR_DOOR"].get("is_open?") and (context.locations["ELEVATOR1"]["elevator_level"] == 5):
             context.locations.EnterRoom("ELEVATOR1")
         else:
@@ -76,8 +76,8 @@ def VoidUpperWhenHere(context, action, item1, item2):
         return True
     return False
 
-def VoidWhenHere(context, action, item1, item2):
-    if action["key"] == ("IN", "EAST"):
+def ElevatorMiddleWhenHere(context, action, item1, item2):
+    if action["key"] in ["IN", "EAST"]:
         if context.items["ELEVATOR_DOOR"].get("is_open?") and (context.locations["ELEVATOR1"]["elevator_level"] == 3):
             context.locations.EnterRoom("ELEVATOR1")
         else:
@@ -85,8 +85,8 @@ def VoidWhenHere(context, action, item1, item2):
         return True
     return False
 
-def VoidBasementWhenHere(context, action, item1, item2):
-    if action["key"] == ("IN", "EAST"):
+def ElevatorBottomWhenHere(context, action, item1, item2):
+    if action["key"] in ["IN", "EAST"]:
         if context.items["ELEVATOR_DOOR"].get("is_open?") and (context.locations["ELEVATOR1"]["elevator_level"] == 1):
             context.locations.EnterRoom("ELEVATOR1")
         else:
@@ -114,41 +114,38 @@ def Elevator1Look(context):
 
 def ElevatorTopLook(context):
     look_string = "This room is surprisingly fancy, with a lovely tiled floor and an equally lovely chandelier. A fancy spiral staircase leads upwards. To the east is an elevator door, and a call button sits next to it. The elevator door is "
-    if context.items["ELEVATOR_DOOR"].get("is_open?"):
+    if (context.items["ELEVATOR_DOOR"].get("is_open?")) and (context.locations["ELEVATOR1"]["elevator_level"] == 5):
         look_string += "open."
     else:
         look_string += "closed."
     dest = context.locations["ELEVATOR1"].get("elevator_destination")
     if dest:
-        look_string += " The button "
         if dest == 5:
-            look_string += "is glowing."
+            look_string += " The button is glowing."
     context.Print(look_string)
 
 def ElevatorMiddleLook(context):
     look_string = "This room isn't actually a room, but a balcony. Metal stairs lead downwards, where you can see machinery. A metal walkway continues to the northeast. To the east is an elevator door, and a call button sits next to it. The elevator door is "
-    if context.items["ELEVATOR_DOOR"].get("is_open?"):
+    if (context.items["ELEVATOR_DOOR"].get("is_open?")) and (context.locations["ELEVATOR1"]["elevator_level"] == 3):
         look_string += "open."
     else:
         look_string += "closed."
     dest = context.locations["ELEVATOR1"].get("elevator_destination")
     if dest:
-        look_string += " The button "
         if dest == 3:
-            look_string += "is glowing."
+            look_string += " The button is glowing."
     context.Print(look_string)
 
 def ElevatorBottomLook(context):
     look_string = "This hallway is full of pipes that stick out of the walls and ceilings and continue down the passageway to the north. A bad smell comes out of room that sits to the south. To the east is an elevator door, and a call button sits next to it. The elevator door is "
-    if context.items["ELEVATOR_DOOR"].get("is_open?"):
+    if (context.items["ELEVATOR_DOOR"].get("is_open?")) and (context.locations["ELEVATOR1"]["elevator_level"] == 1):
         look_string += "open."
     else:
         look_string += "closed."
     dest = context.locations["ELEVATOR1"].get("elevator_destination")
     if dest:
-        look_string += " The button "
         if dest == 1:
-            look_string += "is glowing."
+            look_string += " The button is glowing."
     context.Print(look_string)
 
 # Here is where you "bind" your item handler function to a specific item.
@@ -156,9 +153,9 @@ def Register(context):
     locations = context.locations
     # locations.AddEnterHandler("DINER_INTERIOR", DinerEnter)
     locations.AddWhenHereHandler("ELEVATOR1", Elevator1WhenHere)
-    locations.AddWhenHereHandler("ELEVATOR_TOP", VoidUpperWhenHere)
-    locations.AddWhenHereHandler("ELEVATOR_MIDDLE", VoidWhenHere)
-    locations.AddWhenHereHandler("ELEVATOR_BOTTOM", VoidBasementWhenHere)
+    locations.AddWhenHereHandler("ELEVATOR_TOP", ElevatorTopWhenHere)
+    locations.AddWhenHereHandler("ELEVATOR_MIDDLE", ElevatorMiddleWhenHere)
+    locations.AddWhenHereHandler("ELEVATOR_BOTTOM", ElevatorBottomWhenHere)
     locations.AddLookHandler("ELEVATOR1", Elevator1Look)
     locations.AddLookHandler("ELEVATOR_TOP", ElevatorTopLook)
     locations.AddLookHandler("ELEVATOR_MIDDLE", ElevatorMiddleLook)

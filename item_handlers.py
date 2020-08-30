@@ -191,18 +191,40 @@ def Candle(context, action, other_item, item_is_secondary):
         return True
     return False
 
+def AutoCloseElevatorDoor(context):
+    if context.items["ELEVATOR_DOOR"]["is_open?"] and (context.state.turn_counter - context.items["ELEVATOR_DOOR"]["last_opened"] > 2):
+        context.items["ELEVATOR_DOOR"]["pending_close?"] = True
+        context.items["ELEVATOR_DOOR"]["is_open?"] = False
+        level = context.locations["ELEVATOR1"].get("elevator_level")
+        if (context.player.location == "ELEVATOR1") or ((context.player.location == "ELEVATOR_TOP") and (level == 5)) or ((context.player.location == "ELEVATOR_MIDDLE") and (level == 3)) or ((context.player.location == "ELEVATOR_BOTTOM") and (level == 1)):
+            context.Print("The elevator door closes with a scraping sound.")
+
+def OpenElevatorDoor(context, moving = False):
+    context.items["ELEVATOR_DOOR"]["is_open?"] = True
+    level = context.locations["ELEVATOR1"].get("elevator_level")
+    if (context.player.location == "ELEVATOR1") or ((context.player.location == "ELEVATOR_TOP") and (level == 5)) or ((context.player.location == "ELEVATOR_MIDDLE") and (level == 3)) or ((context.player.location == "ELEVATOR_BOTTOM") and (level == 1)):
+        if (context.player.location == "ELEVATOR1") and moving:
+            context.Print("The elevator comes to a stop and the door opens with a whoosh.")
+        else:
+            context.Print("The elevator door opens with a whoosh.")
+    context.locations["ELEVATOR1"]["elevator_destination"] = None
+    context.items["ELEVATOR_DOOR"]["last_opened"] = context.state.turn_counter
+    context.events.CreateEventInNMoves(AutoCloseElevatorDoor, 3)
+
 def MoveElevator(context):
     level = context.locations["ELEVATOR1"].get("elevator_level")
     dest = context.locations["ELEVATOR1"].get("elevator_destination")
+
+    # Just return if the elevator isn't moving.
+    if not dest:
+        return
+
     if dest > level:
         context.locations["ELEVATOR1"]["elevator_level"] += 1
     elif dest < level:
         context.locations["ELEVATOR1"]["elevator_level"] -= 1
     if dest == level:
-        context.items["ELEVATOR_DOOR"]["is_open?"] = True
-        if (context.player.location == "ELEVATOR1") or ((context.player.location == "ELEVATOR_TOP") and (level == 5)) or ((context.player.location == "ELEVATOR_MIDDLE") and (level == 3)) or ((context.player.location == "ELEVATOR_BOTTOM") and (level == 1)):
-            context.Print("The elevator door opens with a whoosh.")
-        context.locations["ELEVATOR1"]["elevator_destination"] = None
+        OpenElevatorDoor(context, True)
     else:
         context.events.CreateEventInNMoves(MoveElevator, 1)
 
@@ -213,8 +235,7 @@ def PressElevatorCallButton(context, this_floor):
         if context.items["ELEVATOR_DOOR"].get("is_open?"):
             context.Print("The elevator is already here.")
         else:
-            context.Print("The elevator door opens with a whoosh.")
-            context.items["ELEVATOR_DOOR"]["is_open?"] = True
+            OpenElevatorDoor(context, False)
     elif dest == this_floor:
         context.Print("The call button is already lit.")
     else:
@@ -223,8 +244,6 @@ def PressElevatorCallButton(context, this_floor):
         if not dest:
             context.events.CreateEventInNMoves(MoveElevator, 1)
         context.locations["ELEVATOR1"]["elevator_destination"] = this_floor
-
-
 
 def CallButton1(context, action, other_item, item_is_secondary):
     if action["key"] == "PUSH":
@@ -247,22 +266,25 @@ def CallButton3(context, action, other_item, item_is_secondary):
 def PressElevatorButton(context, this_floor):
     level = context.locations["ELEVATOR1"].get("elevator_level")
     dest = context.locations["ELEVATOR1"].get("elevator_destination")
+
+    # See if we're already moving
+    moving = 0
+    if (dest and dest > level):
+        moving = 1
+    if (dest and dest < level):
+        moving = -1
+
+    if context.state.debug:
+        context.Print("Elevator Level: " + str(level))
+        context.Print("Elevator Dest: " + str(dest))
     if level == this_floor:
         if context.items["ELEVATOR_DOOR"].get("is_open?"):
             context.Print("Nothing happens.")
         else:
-            context.Print("The elevator door opens with a whoosh.")
-            context.items["ELEVATOR_DOOR"]["is_open?"] = True
+            OpenElevatorDoor(context, dest)
     elif dest == this_floor:
         context.Print("Nothing happens.")
     else:
-        # See if we're already moving
-        moving = 0
-        if (dest and dest > level):
-            moving = 1
-        if (dest and dest < level):
-            moving = -1
-
         if moving == 0:
             print_str = "The button lights up"
             if context.items["ELEVATOR_DOOR"].get("is_open?"):
@@ -277,7 +299,6 @@ def PressElevatorButton(context, this_floor):
             else:
                 context.Print("The button you pressed is now the button illuminated.")
         context.locations["ELEVATOR1"]["elevator_destination"] = this_floor
-
 
 def ElevatorButton1(context, action, other_item, item_is_secondary):
     if action["key"] == "PUSH":

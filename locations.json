@@ -423,10 +423,10 @@
     "down": "",
     "in": "",
     "out": "",
-    "elevator_level": 5
+    "elevator_level": 2
   },
   "ELEVATOR_TOP": {
-    "brief_desc": "Hidden Room",
+    "brief_desc": "Fancy Room",
     "long_desc": "",
     "dark?": false,
     "north": "",
