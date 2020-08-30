@@ -1,6 +1,7 @@
 # This function is called as the game is starting. Use it to print introduction text.
 def IntroText(context):
-    context.Print("context.print 'Welcome adventurer'\n{inserting items into convenient locations} \nplayer.set == return True \nlist.run <milk, 2 dozen eggs, butter, 4 lbs chicken, anchovies>\ndef;loading_startup [remove.'binary'code] \nloading...{Traveling through hyperspace} \nIntroText(context): OUTSIDE_BUILDING \n \nGame created by Erik (with a little help) \n \nType ? for help")
+    context.Print(
+        "context.print 'Welcome adventurer'\n{inserting items into convenient locations} \nplayer.set == return True \nlist.run <milk, 2 dozen eggs, butter, 4 lbs chicken, anchovies> \nloading...{Traveling through hyperspace}  \n \nGame created by Erik (with a little help) \n \nType ? for help")
     print()
 
 # This function is called as the game is starting. Use it to initialize game settings
@@ -9,7 +10,7 @@ def InitialSetup(context):
     context.player.SetPlayerLocation("OUTSIDE_MANOR")
     context.player.hunger_level = 0
     context.actions.swear_words = {"SHIT", "DAMN", "FUCK"}
-    context.actions.swear_response = "A bird dropping hits you in the face for swearing!"
+    context.actions.swear_response = "Let's keep this PG, folks. Next time there'll be consequences."
     context.events.CreateEventInNMoves(CheckHunger, 0)
 
 def CheckHunger(context):
@@ -26,5 +27,5 @@ def CheckHunger(context):
   if context.player.hunger_level == 190:
     context.Print("Gandhi survived without food for 21 days. You're not Gandhi. You're about to starve.")
   if context.player.hunger_level == 200:
-    context.Print("You die from hunger. Better luck next time.")
+    context.Print("You die from hunger. Don't say we didn't warn you!")
     context.player.Kill()

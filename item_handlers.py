@@ -200,13 +200,13 @@ def MoveElevator(context):
         context.locations["ELEVATOR1"]["elevator_level"] -= 1
     if dest == level:
         context.items["ELEVATOR_DOOR"]["is_open?"] = True
-        if (context.player.location == "ELEVATOR1") or ((context.player.location == "VOID_UPPER") and (level == 7)) or ((context.player.location == "THE_VOID") and (level == 4)) or ((context.player.location == "VOID_BASEMENT") and (level == 1)):
+        if (context.player.location == "ELEVATOR1") or ((context.player.location == "ELEVATOR_TOP") and (level == 5)) or ((context.player.location == "ELEVATOR_MIDDLE") and (level == 3)) or ((context.player.location == "ELEVATOR_BOTTOM") and (level == 1)):
             context.Print("The elevator door opens with a whoosh.")
         context.locations["ELEVATOR1"]["elevator_destination"] = None
     else:
         context.events.CreateEventInNMoves(MoveElevator, 1)
 
-def PressElevatorButton(context, this_floor):
+def PressElevatorCallButton(context, this_floor):
     level = context.locations["ELEVATOR1"].get("elevator_level")
     dest = context.locations["ELEVATOR1"].get("elevator_destination")
     if level == this_floor:
@@ -224,21 +224,76 @@ def PressElevatorButton(context, this_floor):
             context.events.CreateEventInNMoves(MoveElevator, 1)
         context.locations["ELEVATOR1"]["elevator_destination"] = this_floor
 
+
+
 def CallButton1(context, action, other_item, item_is_secondary):
     if action["key"] == "PUSH":
-        PressElevatorButton(context, 1)
+        PressElevatorCallButton(context, 1)
         return True
     return False
 
 def CallButton2(context, action, other_item, item_is_secondary):
     if action["key"] == "PUSH":
-        PressElevatorButton(context, 4)
+        PressElevatorCallButton(context, 3)
         return True
     return False
 
 def CallButton3(context, action, other_item, item_is_secondary):
     if action["key"] == "PUSH":
-        PressElevatorButton(context, 7)
+        PressElevatorCallButton(context, 5)
+        return True
+    return False
+
+def PressElevatorButton(context, this_floor):
+    level = context.locations["ELEVATOR1"].get("elevator_level")
+    dest = context.locations["ELEVATOR1"].get("elevator_destination")
+    if level == this_floor:
+        if context.items["ELEVATOR_DOOR"].get("is_open?"):
+            context.Print("Nothing happens.")
+        else:
+            context.Print("The elevator door opens with a whoosh.")
+            context.items["ELEVATOR_DOOR"]["is_open?"] = True
+    elif dest == this_floor:
+        context.Print("Nothing happens.")
+    else:
+        # See if we're already moving
+        moving = 0
+        if (dest and dest > level):
+            moving = 1
+        if (dest and dest < level):
+            moving = -1
+
+        if moving == 0:
+            print_str = "The button lights up"
+            if context.items["ELEVATOR_DOOR"].get("is_open?"):
+                context.items["ELEVATOR_DOOR"]["is_open?"] = False
+                print_str += " and the door closes with a heavy clunk"
+            context.Print(print_str + ". A moment later you feel the elevator start moving.")
+            context.events.CreateEventInNMoves(MoveElevator, 1)
+
+        else:
+            if ((moving == 1) and (this_floor < level)) or ((moving == -1) and (this_floor > level)):
+                context.Print("The elevator immediately comes to a stop. A moment later you feel it begin to move in the opposite direction.")
+            else:
+                context.Print("The button you pressed is now the button illuminated.")
+        context.locations["ELEVATOR1"]["elevator_destination"] = this_floor
+
+
+def ElevatorButton1(context, action, other_item, item_is_secondary):
+    if action["key"] == "PUSH":
+        PressElevatorButton(context, 1)
+        return True
+    return False
+
+def ElevatorButton2(context, action, other_item, item_is_secondary):
+    if action["key"] == "PUSH":
+        PressElevatorButton(context, 3)
+        return True
+    return False
+
+def ElevatorButton3(context, action, other_item, item_is_secondary):
+    if action["key"] == "PUSH":
+        PressElevatorButton(context, 5)
         return True
     return False
 
@@ -256,3 +311,6 @@ def Register(context):
     items.AddItemHandler("CALL_BUTTON_1", CallButton1)
     items.AddItemHandler("CALL_BUTTON_2", CallButton2)
     items.AddItemHandler("CALL_BUTTON_3", CallButton3)
+    items.AddItemHandler("ONE_BUTTON", ElevatorButton1)
+    items.AddItemHandler("TWO_BUTTON", ElevatorButton2)
+    items.AddItemHandler("THREE_BUTTON", ElevatorButton3)

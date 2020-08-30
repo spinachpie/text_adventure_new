@@ -111,21 +111,21 @@
   "ONE_BUTTON": {
     "name": "one button",
     "words": ["BUTTON"],
-    "adjectives":["ONE"],
+    "adjectives":["ONE", "1"],
     "init_loc": "ELEVATOR1",
     "do_not_list?": true
   },
   "TWO_BUTTON": {
     "name": "two button",
     "words": ["BUTTON"],
-    "adjectives":["TWO"],
+    "adjectives":["TWO", "2"],
     "init_loc": "ELEVATOR1",
     "do_not_list?": true
   },
   "THREE_BUTTON": {
     "name": "three button",
     "words": ["BUTTON"],
-    "adjectives":["THREE"],
+    "adjectives":["THREE", "3"],
     "init_loc": "ELEVATOR1",
     "do_not_list?": true
   },
@@ -133,28 +133,28 @@
     "name": "elevator call button",
     "words": ["BUTTON"],
     "adjectives":["CALL"],
-    "init_loc": "VOID_UPPER",
+    "init_loc": "ELEVATOR_TOP",
     "do_not_list?": true
   },
   "CALL_BUTTON_2": {
     "name": "elevator call button",
     "words": ["BUTTON"],
     "adjectives":["CALL"],
-    "init_loc": "THE_VOID",
+    "init_loc": "ELEVATOR_MIDDLE",
     "do_not_list?": true
   },
   "CALL_BUTTON_1": {
     "name": "elevator call button",
     "words": ["BUTTON"],
     "adjectives":["CALL"],
-    "init_loc": "VOID_BASEMENT",
+    "init_loc": "ELEVATOR_BOTTOM",
     "do_not_list?": true
   },
   "ELEVATOR_DOOR": {
     "name": "elevator door",
     "words": ["DOOR"],
     "adjectives":["ELEVATOR"],
-    "init_loc": ["VOID_BASEMENT","THE_VOID","VOID_UPPER","ELEVATOR1"],
+    "init_loc": ["ELEVATOR_BOTTOM","ELEVATOR_MIDDLE","ELEVATOR_TOP","ELEVATOR1"],
     "do_not_list?": true
   },
   "ALL": { "name": "All", "words": ["ALL"], "no_article?": true },
