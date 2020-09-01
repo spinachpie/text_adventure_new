@@ -318,7 +318,7 @@
     "southeast": "",
     "southwest": "",
     "up": "",
-    "down": "",
+    "down": "ELEVATOR_TOP|SECRET_TRAPDOOR",
     "in": "",
     "out": ""
   },
@@ -437,7 +437,7 @@
     "northwest": "",
     "southeast": "",
     "southwest": "",
-    "up": "",
+    "up": "BUNKER|SECRET_TRAPDOOR",
     "down": "",
     "in": "",
     "out": ""

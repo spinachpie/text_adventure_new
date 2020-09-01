@@ -26,6 +26,15 @@
     "is_open?": false,
     "openable?": true
   },
+  "SECRET_TRAPDOOR": {
+    "name": "trapdoor",
+    "words": ["DOOR", "TRAPDOOR"],
+    "adjectives": ["TRAP", "HIDDEN", "SECRET"],
+    "init_loc": ["BUNKER","ELEVATOR_TOP"],
+    "do_not_list?": true,
+    "is_open?": false,
+    "openable?": true
+  },
   "MASTER_BED": {
     "name": "master bed",
     "words": ["BED"],
@@ -80,6 +89,13 @@
     "takeable?": true,
     "init_loc": "BACKPACK"
   },
+  "BATTERY": {
+    "name": "battery",
+    "words": ["BATTERY", "BATTERIES"],
+    "adjectives": ["NEW"],
+    "takeable?": true,
+    "init_loc": "BUNKER"
+  },
   "DUCKY": {
     "name": "ruber ducky",
     "long_desc": "small yellow rubber ducky",
@@ -111,42 +127,42 @@
   "ONE_BUTTON": {
     "name": "one button",
     "words": ["BUTTON"],
-    "adjectives":["ONE", "1"],
+    "adjectives":["ONE", "1", "ELEVATOR"],
     "init_loc": "ELEVATOR1",
     "do_not_list?": true
   },
   "TWO_BUTTON": {
     "name": "two button",
     "words": ["BUTTON"],
-    "adjectives":["TWO", "2"],
+    "adjectives":["TWO", "2", "ELEVATOR"],
     "init_loc": "ELEVATOR1",
     "do_not_list?": true
   },
   "THREE_BUTTON": {
     "name": "three button",
     "words": ["BUTTON"],
-    "adjectives":["THREE", "3"],
+    "adjectives":["THREE", "3", "ELEVATOR"],
     "init_loc": "ELEVATOR1",
     "do_not_list?": true
   },
   "CALL_BUTTON_3": {
     "name": "elevator call button",
     "words": ["BUTTON"],
-    "adjectives":["CALL"],
+    "adjectives":["CALL", "ELEVATOR"],
     "init_loc": "ELEVATOR_TOP",
     "do_not_list?": true
   },
   "CALL_BUTTON_2": {
     "name": "elevator call button",
     "words": ["BUTTON"],
-    "adjectives":["CALL"],
+    "adjectives":["CALL", "ELEVATOR"],
     "init_loc": "ELEVATOR_MIDDLE",
     "do_not_list?": true
   },
   "CALL_BUTTON_1": {
     "name": "elevator call button",
     "words": ["BUTTON"],
-    "adjectives":["CALL"],
+    "adjectives":["CALL", "ELEVATOR"],
     "init_loc": "ELEVATOR_BOTTOM",
     "do_not_list?": true
   },
