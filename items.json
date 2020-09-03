@@ -50,6 +50,14 @@
     "init_loc": "VOID_BASEMENT",
     "is_food?": true
   },
+  "GLOSTIK": {
+    "name": "Glo-Stik",
+    "words": ["STIK", "GLO-STIK", "GLOWSTICK", "STICK", "GLOW-STICK", "GLOSTIK"],
+    "adjectives": ["GLO", "GLOW"],
+    "takeable?": true,
+    "init_loc": "VOID_BASEMENT",
+    "light_source?": true
+  },
   "MUFFIN": {
     "name": "blueberry muffin",
     "long_desc": "blueberry muffin",
@@ -94,7 +102,7 @@
     "words": ["BATTERY", "BATTERIES"],
     "adjectives": ["NEW"],
     "takeable?": true,
-    "init_loc": "BUNKER"
+    "init_loc": "VOID_UPPER"
   },
   "DUCKY": {
     "name": "ruber ducky",

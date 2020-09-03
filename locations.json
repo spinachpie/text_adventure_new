@@ -462,7 +462,7 @@
   "ELEVATOR_BOTTOM": {
     "brief_desc": "Hallway of Pipes",
     "long_desc": "",
-    "dark?": false,
+    "dark?": true,
     "north": "",
     "south": "",
     "east": "",

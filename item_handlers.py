@@ -131,10 +131,18 @@ def PunchingBag(context, action, other_item, item_is_secondary):
         return True
     return False
 
+def Battery(context, action, other_item, item_is_secondary):
+    if (action["key"] in "PUT_INTO") and (other_item["key"] == "FLASHLIGHT") and not item_is_secondary:
+        context.Print("You insert the battery into the flashlight.")
+        context.items.MoveItemTo("BATTERY", "FLASHLIGHT")
+    return True
+
 def Flashlight(context, action, other_item, item_is_secondary):
-    if action["key"] == "TURN_ON":
+    if action["key"] in ["TURN_ON", "LIGHT"]:
         if context.items["FLASHLIGHT"].get("light_source?"):
             context.Print("It's already on.")
+        elif not "BATTERY" in context.items["FLASHLIGHT"]["contents"]:
+            context.Print("The flashlight battery is missing.")
         else:
             context.items["FLASHLIGHT"]["light_source?"] = True
             context.Print("You switch on the flashlight.")
@@ -326,7 +334,8 @@ def Register(context):
     # items.AddItemHandler("KEYPAD", JukeboxKeypad)
     # items.AddItemHandler("PUNCHING_BAG", PunchingBag)
     # items.AddItemHandler("NUMBER", Number)
-    # items.AddItemHandler("FLASHLIGHT", Flashlight)
+    items.AddItemHandler("FLASHLIGHT", Flashlight)
+    items.AddItemHandler("BATTERY", Battery)
     items.AddItemHandler("CANDLE", Candle)
     items.AddItemHandler("MATCHES", Matches)
     items.AddItemHandler("CALL_BUTTON_1", CallButton1)

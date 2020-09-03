@@ -65,7 +65,8 @@ class Player:
         return locations[self.location]
 
     def Kill(self, death_text="*** YOU HAVE DIED! ***"):
-        Print(death_text)
+        if death_text:
+            Print("\n" + death_text)
         Print("")
         Print("Do you want to restart (Y/N)?")
         state.restart_pending = True
@@ -282,7 +283,7 @@ class ActionsMaster:
         return False
 
     # Given a list of words, attempt to resolve to a single item in the game. Complain and return None if this is impossible.
-    def ParseItem(self, command_substring):
+    def ParseItem(self, command_substring, expects_number=False):
         if state.debug:
             print("Parse Item: " + ' '.join(command_substring))
 
@@ -303,12 +304,12 @@ class ActionsMaster:
         if (len(command_substring) == 1) and (command_substring[0] == "ALL"):
             return Token("Item", "ALL", ["ALL"])
 
-        # Handle numbers
-        if (len(command_substring) == 1) and (command_substring[0].isdigit()):
-            return Token("Item", "NUMBER", [command_substring[0]])
-
         # First, find all possible item matches for these command words
         item_candidates = []
+
+        # Handle numbers
+        if (len(command_substring) == 1) and (command_substring[0].isdigit()):
+            item_candidates.append("NUMBER")
 
         # If we are waiting on the player to disambiguate between several items, narrow the search universe to just those items
         item_universe = items.items_dictionary
@@ -334,6 +335,16 @@ class ActionsMaster:
             return Token("Item", item_candidates[0], command_substring)
 
         # Need to disambiguate. Start by narrowing the candidates to items that are here.
+
+        if (item_candidates[0] == "NUMBER"):
+            if expects_number:
+                return Token("Item", item_candidates[0], command_substring)
+            else:
+                if len(item_candidates) == 2:
+                    return Token("Item", item_candidates[1], command_substring)
+                else:
+                    item_candidates.remove("NUMBER")
+
         item_candidates_here = []
         for item_candidate in item_candidates:
             if items.TestIfItemIsIn(item_candidate, player.inventory) or (
@@ -391,13 +402,6 @@ class ActionsMaster:
             if self.CheckForSwear(word):
                 return
 
-        # Basically just ignore "GO" (e.g. "GO NORTH" or "GO INSIDE")
-        if (command_words[0] == "GO") and (player.hp > 0):
-            if len(command_words) == 1:
-                Print("Where would you like to go?")
-                return
-            del command_words[0]
-
         if len(command_string) == 0:
             Print("Eh?")
             return
@@ -445,10 +449,17 @@ class ActionsMaster:
                     state.restart_pending = False
                 return
 
-        # Are you dead? (pending response to Restart Y/N?)
         if player.hp <= 0:
-            player.Kill("You can't do that due to the fact that you're dead.")
+            Print("You can't do that on account of the fact that you're dead.")
+            player.Kill("")
             return
+
+        # Basically just ignore "GO" (e.g. "GO NORTH" or "GO INSIDE")
+        if command_words[0] == "GO":
+            if len(command_words) == 1:
+                Print("Where would you like to go?")
+                return
+            del command_words[0]
 
         # Locate prepositions in the command (if any)
         preposition_index = -1
@@ -505,6 +516,13 @@ class ActionsMaster:
             state.ClearPending()
             state.this_parsed_command = [Token("Action", action_key, user_action_words)]
 
+            # Handle actions that mimic other actions
+            mimic_action = self[action_key].get("mimic")
+            if mimic_action:
+                if state.debug:
+                    Print("MIMIC action detected")
+                state.this_parsed_command[0].key = mimic_action
+
             if preps_found:
                 # Handle case with one object, e.g. TURN ON FLASHLIGHT
                 if self[action_key].get("no_second_item?"):
@@ -513,7 +531,8 @@ class ActionsMaster:
                         if not x == preposition_index:
                             user_item_words.append(command_words[x])
                     if len(user_item_words) > 0:
-                        state.this_parsed_command.append(self.ParseItem(user_item_words))
+                        state.this_parsed_command.append(
+                            self.ParseItem(user_item_words, self[action_key].get("expects_number?")))
 
                 # Handle case with two objects, e.g. PUT X IN Y
                 else:
@@ -524,21 +543,18 @@ class ActionsMaster:
                         return
 
                     # Add tokens to parsed_command for objects on either side of the preposition:
-                    state.this_parsed_command.append(self.ParseItem(command_words[1:preposition_index]))
+                    state.this_parsed_command.append(
+                        self.ParseItem(command_words[1:preposition_index], self[action_key].get("expects_number?")))
                     if not state.this_parsed_command[1] == None:
                         state.this_parsed_command.append(self.ParseItem(command_words[preposition_index + 1:]))
 
             elif len(command_words) > 1:
-                state.this_parsed_command.append(self.ParseItem(command_words[1:]))
+                state.this_parsed_command.append(
+                    self.ParseItem(command_words[1:], self[action_key].get("expects_number?")))
 
             for this_token in state.this_parsed_command:
                 if not this_token:
                     return
-
-            # Handle actions that mimic other actions
-            mimic_action = self[action_key].get("mimic")
-            if mimic_action:
-                state.this_parsed_command[0].key = mimic_action
 
         elif state.waiting_for_item:
             # First word was not an action.
@@ -548,10 +564,10 @@ class ActionsMaster:
             #  (3) We have prompted the player to type in a number
 
             # In all three cases, we will parse the command as an item and then attempt to put it into the right spot in the previous parsed command
-            new_token = self.ParseItem(command_words)
+            action_key = state.this_parsed_command[0].key
+            new_token = self.ParseItem(command_words, self[action_key].get("expects_number?"))
             if not new_token:
                 return
-            action_key = state.this_parsed_command[0].key
             if len(state.this_parsed_command) == 1:
                 state.this_parsed_command.append(new_token)
             elif state.this_parsed_command[1] == None:
