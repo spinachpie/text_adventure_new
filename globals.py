@@ -1,13 +1,13 @@
 # This function is called as the game is starting. Use it to print introduction text.
 def IntroText(context):
     context.Print(
-        "context.print 'Welcome adventurer'\n{inserting items into convenient locations} \nplayer.set == return True \nlist.run <milk, 2 dozen eggs, butter, 4 lbs chicken, anchovies> \nloading...{Traveling through hyperspace}  \n \nGame created by Erik (with a little help) \n \nType ? for help")
+        "context.print 'Welcome adventurer'\n{inserting items into convenient locations} \nplayer.set == return True \nloading...[Traveling through hyperspace]  \n \nGame created by Erik (with a little help) \n \nType ? for help \nSave game by typing 'SAVE' and restore a save by typing 'RESTORE'")
     print()
 
 # This function is called as the game is starting. Use it to initialize game settings
 #  like the player's starting location.
 def InitialSetup(context):
-    context.player.SetPlayerLocation("OUTSIDE_MANOR")
+    context.player.SetPlayerLocation("PARK")
     context.player.hunger_level = 0
     context.actions.swear_words = ["SHIT", "DAMN", "FUCK"]
     context.actions.swear_response = "Let's keep this PG, folks. Next time there'll be consequences."

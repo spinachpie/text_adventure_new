@@ -42,6 +42,59 @@
     "do_not_list?": true,
     "init_loc": "MASTER_BEDROOM"
   },
+  "SIGN": {
+    "name": "trailhead sign",
+    "words": ["SIGN"],
+    "examine_string": "",
+    "adjectives": ["TRAILHEAD"],
+    "do_not_list?": false,
+    "init_loc": "PARK"
+  },
+  "MISSING_POSTER": {
+    "name": "missing poster",
+    "words": ["POSTER"],
+    "examine_string": "This poster reads 'MISSING! | Diamond Ring | Large $$$ reward!' \n(343)228-1730",
+    "adjectives": ["MISSING"],
+    "do_not_list?": false,
+    "takeable?": true,
+    "init_loc": "VOID_UPPER"
+  },
+  "PIANO_LESSON": {
+    "name": "piano lesson flyer",
+    "words": ["FLYER"],
+    "examine_string": "A flyer that reads 'CHEAP PIANO LESSONS! CALL NOW!' \nThere is also a phone number: (343)648-9913",
+    "adjectives": ["PIANO", "LESSON"],
+    "do_not_list?": false,
+    "takeable?": true,
+    "init_loc": "VOID_UPPER"
+  },
+  "CHEESY_PUN": {
+    "name": "Forest Service hydration paper",
+    "words": ["PAPER"],
+    "examine_string": "A cheesy pun that says 'HYdrate, don't DIEdrate!' with a picture of a water bottle and some extremely happy hikers.",
+    "adjectives": ["HYDRATION", "FOREST", "SERVICE"],
+    "do_not_list?": false,
+    "takeable?": true,
+    "init_loc": "VOID_UPPER"
+  },
+  "INVENTORY_SHEET": {
+    "name": "Forest Service essentials paper",
+    "words": ["PAPER"],
+    "examine_string": "A paper which reads: \nWhen on a hike, never forget to bring the essentials! \nBackpack \nFood \nFlashlight \nMap and Compass \nKnife",
+    "adjectives": ["ESSENTIALS", "FOREST", "SERVICE"],
+    "do_not_list?": false,
+    "takeable?": true,
+    "init_loc": "VOID_UPPER"
+  },
+  "MAP": {
+    "name": "Forest Service map",
+    "words": ["MAP"],
+    "examine_string": " ________________________________________________\n|___________________Maple_St_____________________|\n|                    ____                        |\n|                   |____|                       |\n|                     /park                      |\n|                    /                           |\n|         ^         /                            |\n|        |_|_______/                             |\n|                  |                             |\n|                  |                             |\n|                  |                             |\n|                  |                             |\n|            Scenic|                             |\n|              View|                             |\n|                  /                             |\n|                 /                              |\n|                /                               |\n|               /                                |\n|              /                                 |\n|            _/                    *             |\n|           |_|                  Nook's          |\n|                                 Cave           |\n|                                             N  |\n|                                           W + E|\n|_____________________________________________S__|",
+    "adjectives": ["FOREST", "SERVICE"],
+    "do_not_list?": false,
+    "takeable?": true,
+    "init_loc": "PARK"
+  },
   "DONUT": {
     "name": "jelly donut",
     "words": ["DONUT"],

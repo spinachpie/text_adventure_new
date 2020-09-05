@@ -164,6 +164,17 @@ def Flashlight(context, action, other_item, item_is_secondary):
         return True
     return False
 
+def Sign(context, action, other_item, item_is_secondary):
+    if action["key"] == "EXAMINE":
+        context.items.MoveItemTo("CHEESY_PUN", "PARK")
+        context.items.MoveItemTo("INVENTORY_SHEET", "PARK")
+        context.items.MoveItemTo("MISSING_POSTER", "PARK")
+        context.items.MoveItemTo("PIANO_LESSON", "PARK")
+        context.items.MoveItemTo("MAP", "PARK")
+        context.Print("This is a large wooden sign, with an overhang to protect against the precipitation.")
+        return True
+    return False
+
 def Matches(context, action, other_item, item_is_secondary):
     if (action["key"] == "LIGHT"):
         context.Print("You light one of the matches, and it burns out after a couple seconds.")
@@ -338,6 +349,7 @@ def Register(context):
     items.AddItemHandler("BATTERY", Battery)
     items.AddItemHandler("CANDLE", Candle)
     items.AddItemHandler("MATCHES", Matches)
+    items.AddItemHandler("SIGN", Sign)
     items.AddItemHandler("CALL_BUTTON_1", CallButton1)
     items.AddItemHandler("CALL_BUTTON_2", CallButton2)
     items.AddItemHandler("CALL_BUTTON_3", CallButton3)
