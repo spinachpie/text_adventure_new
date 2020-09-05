@@ -9,9 +9,11 @@ import globals
 import item_handlers
 import location_handlers
 import textwrap
-
+import pickle
+from pathlib import Path
 
 ######################### CONTEXT #########################
+
 
 # This class is a package of all of the major object containers which can easily be passed to action handlers
 class Context:
@@ -34,8 +36,134 @@ class Context:
             default_string = "T" + default_string[1:]
         self.Print(default_string)
 
+    # Prompts the user to enter a slot to save their game.
+    # If the boolean argument is set to true, the user's entered slot must already exist
+    def PromptForFilename(self, slot_must_exist = False):
+        # Determine path
+        filepath = Path.cwd() / "save_data"
+        if (not filepath.exists()) or (not filepath.is_dir()):
+            filepath.mkdir(parents=False, exist_ok=True)
+
+        # Display saves
+        slots_str = "Save slots used (* = most recent): "
+        most_recent_time = 0
+        most_recent_slot = None
+        slots_used = []
+        for i in range(20):
+            slot_file = filepath / ("game_data" + ("0" if i < 10 else "") + str(i) + ".pickle")
+            if slot_file.exists():
+                slots_used.append(i)
+                if slot_file.stat().st_mtime > most_recent_time:
+                    most_recent_time = slot_file.stat().st_mtime
+                    most_recent_slot = i
+        for i in slots_used:
+            slots_str += ("*" if most_recent_slot == i else " ") + str(i) + " "
+        Print(slots_str)
+
+        # Prompt for slot number
+        user_slot = input("  Enter save slot (1-20) [blank = cancel] >> ")
+        Print("")
+
+        # Is it valid?
+        if (not user_slot.isdigit()) or (int(user_slot) < 1) or (int(user_slot) > 20):
+            return None
+
+        if slot_must_exist and not int(user_slot) in slots_used:
+            return None
+
+        return filepath / ("game_data" + ("0" if int(user_slot) < 10 else "") + user_slot + ".pickle")
+
+    # Simple encryption so our save files don't include strings that give away game elements
+    def EncryptString(self, text, offset):
+        result = ""
+        for i in range(len(text)):
+            char = text[i]
+            if not char.isalpha():
+                result += char
+            elif char.isupper():
+                result += chr((ord(char) + offset - 65) % 26 + 65)
+            else:
+                result += chr((ord(char) + offset - 97) % 26 + 97)
+        return result
+
+    def DoEncryptObject(self, obj, offset):
+        if isinstance(obj,dict):
+            encrypted = {}
+            for key in obj.keys():
+                encrypted[self.EncryptString(key,offset)] = self.DoEncryptObject(obj[key], offset)
+            return encrypted
+        elif isinstance(obj,list):
+            encrypted = []
+            for entry in obj:
+                encrypted.append(self.DoEncryptObject(entry, offset))
+            return encrypted
+        elif isinstance(obj,str):
+            return self.EncryptString(obj, offset)
+        else:
+            return obj
+
+    def EncryptObject(self, obj):
+        return self.DoEncryptObject(obj,9)
+
+    def DecryptObject(self, obj):
+        return self.DoEncryptObject(obj, -9)
+
+    # This is part one of the restore process: attempt to load a save from file. If successful,
+    #  a restore package is returned.
+    def LoadRestorePackage(self):
+        filepath = self.PromptForFilename(True)
+        if not filepath:
+            Print("Restore cancelled.")
+            return None
+        save_state = {}
+        events_list = []
+        with open(filepath, "rb") as f:
+            save_state = pickle.load(f)
+            events_list = pickle.load(f)
+        if save_state:
+            return [self.DecryptObject(save_state), self.DecryptObject(events_list)]
+        return None
+
+    # Method is called during a restore, when a save has been successfully loaded from disk
+    # All initialization of player, items, locations, etc MUST have already taken place
+    #  before calling ProcessRestore().
+    def ProcessRestorePackage(self, restore_package):
+        if not restore_package:
+            return
+
+        save_state = restore_package[0]
+        events_list = restore_package[1]
+
+        for key in save_state["player"].keys():
+            self.player.__dict__[key] = save_state["player"][key]
+        for key in save_state["state"].keys():
+            self.state.__dict__[key] = save_state["state"][key]
+        for item_key in save_state["items"].keys():
+            for attr_key in save_state["items"][item_key].keys():
+                self.items[item_key][attr_key] = save_state["items"][item_key][attr_key]
+        for loc_key in save_state["locations"].keys():
+            for attr_key in save_state["locations"][loc_key].keys():
+                self.locations[loc_key][attr_key] = save_state["locations"][loc_key][attr_key]
+        self.events.events = events_list
+
+    def SaveGame(self):
+        filepath = self.PromptForFilename(False)
+        if not filepath:
+            Print("Save cancelled.")
+            return
+        save_state = {}
+        save_state["player"] = self.player.Serialize()
+        save_state["locations"] = locations.Serialize()
+        save_state["items"] = items.Serialize()
+        save_state["state"] = self.state.Serialize()
+        with open(filepath, "wb") as f:
+            pickle.dump( self.EncryptObject(save_state), f)
+            pickle.dump(self.EncryptObject(self.events.Serialize()), f)
+        Print("Game saved.")
+
 
 ######################### TOKEN #########################
+
 
 # This class contains token information (for parsed tokens)
 class Token:
@@ -47,13 +175,16 @@ class Token:
 
 ######################### PLAYER #########################
 
+
 # This class contains player status information
 class Player:
     def __init__(self):
         self.hp = 100
         self.inventory = []
         self.location = ""
-        self.quit_requested = False
+
+    def Serialize(self):
+        return self.__dict__
 
     def IsAlive(self):
         return self.hp > 0
@@ -64,7 +195,7 @@ class Player:
     def GetPlayerLocation(self):
         return locations[self.location]
 
-    def Kill(self, death_text="*** YOU HAVE DIED! ***"):
+    def Kill(self, death_text = "*** YOU HAVE DIED! ***"):
         if death_text:
             Print("\n" + death_text)
         Print("")
@@ -75,13 +206,15 @@ class Player:
 
 ######################### GLOBAL CONDITIONS #########################
 
+
 # This class is used to track various state variables and history
 class State:
     def __init__(self):
-        self.turn_counter = 0
+        # Start by setting all non-serialized state vars (stuff you don't want saved/restored)
         self.quit_confirmed = False
         self.quit_pending = False
         self.restart_confirmed = False
+        self.restore_requested = False
         self.restart_pending = False
         self.waiting_for_item = False
         self.disambiguate_list = []
@@ -94,6 +227,19 @@ class State:
         self.oops_words = None
         self.debug = False
 
+        self.nonserialize_attributes = []
+        for key in self.__dict__:
+            self.nonserialize_attributes.append(key)
+
+        self.turn_counter = 0
+
+    def Serialize(self):
+        serialize_dict = {}
+        for key in self.__dict__.keys():
+            if key not in self.nonserialize_attributes:
+                serialize_dict[key] = self.__dict__[key]
+        return serialize_dict
+
     def ClearPending(self):
         self.quit_pending = False
         self.restart_pending = False
@@ -102,12 +248,11 @@ class State:
         self.this_parsed_command = []
         self.this_user_input = None
         self.oops_index = None
-        self.oops_words = None
+        self.oops_words = None       
 
-        # This is called at the end of each turn; it remembers this period's user input and commands for recall next period
-
+    # This is called at the end of each turn; it remembers this period's user input and commands for recall next period
     def PostProcess(self):
-        if self.parse_successful:
+        if self.parse_successful and (not state.restart_pending) and (not state.quit_pending) and (not state.restore_requested):
             events.CheckEvents(self.turn_counter)
             self.turn_counter += 1
             self.last_parsed_command = self.this_parsed_command
@@ -119,6 +264,7 @@ class State:
 
 
 ######################### LOCATIONS #########################
+
 
 # Master object container for locations
 class LocationsMaster:
@@ -132,10 +278,24 @@ class LocationsMaster:
             self.locations_dictionary[loc_key]["items"] = []
             self.locations_dictionary[loc_key]["enter_handler"] = None
             self.locations_dictionary[loc_key]["when_here_handler"] = None
+            self.locations_dictionary[loc_key]["look_handler"] = None
 
     # This allows you to type "locations[<key>]" for convenience
-    def __getitem__(self, key):
-        return self.locations_dictionary[key]
+    def __getitem__(self, key): return self.locations_dictionary[key]
+
+    # Convert locations to dictionary, excluding any descriptions, direction attributes, and immutable stuff
+    def Serialize(self):
+        serialize_dict = {}
+        for location in self.locations_dictionary.values():
+            location_entry = {}
+            for key, value in location.items():
+                if key not in ["brief_desc","long_desc","north","south","east","west","northeast","northwest",
+                               "southeast","southwest","up","down","in","out","enter_handler",
+                               "when_here_handler","look_handler","key"]:
+                    location_entry[key] = value
+            if location_entry:
+                serialize_dict[location["key"]] = location_entry
+        return(serialize_dict)
 
     # Add a function to trigger on entering this location
     def AddEnterHandler(self, loc_key, handler):
@@ -152,11 +312,11 @@ class LocationsMaster:
     # This function handles a move in a certain direction.
     def HandleMove(self, direction):
         new_location_key = self[player.location].get(str.lower(direction))
-
+        
         # Test whether the location key in this location is a string description; if so, print it.
         if ' ' in new_location_key:
-            Print(new_location_key)
-
+          Print(new_location_key)
+        
         # Test for a door (denoted with the "LOCATION|DOOR" notation)
         if '|' in new_location_key:
             new_loc_array = new_location_key.split('|')
@@ -164,10 +324,8 @@ class LocationsMaster:
                 Print("The " + items[new_loc_array[1]].get("name") + " is closed.")
             else:
                 self.EnterRoom(new_loc_array[0])
-
-        elif self.IsDark() and (
-                (new_location_key == None) or (len(new_location_key) == 0) or not locations[new_location_key].get(
-                "touched?")):
+       
+        elif self.IsDark() and ((new_location_key == None) or (len(new_location_key) == 0) or not locations[new_location_key].get("touched?")):
             Print("It's hard to tell in the dark if it's possible to move in that location.")
 
         elif (new_location_key != None) and (len(new_location_key) > 0):
@@ -208,8 +366,7 @@ class LocationsMaster:
 
     # Describes all items in a particular location
     def DescribeItemsInLocation(self):
-        items.ListItems(self[player.location]["items"], decorate="There is @ here.", article="a", indent=0,
-                        blank_line=True, announce_if_nothing=False)
+        items.ListItems(self[player.location]["items"], decorate = "There is @ here.", article = "a", indent = 0, blank_line = True, announce_if_nothing = False)
 
     # Is the current location dark (and is there no light source in the room or in player inventory?)
     def IsDark(self):
@@ -222,11 +379,12 @@ class LocationsMaster:
             item = items[item_key]
             if (item.get("light_source?")):
                 return False
-
+        
         return True
 
 
 ######################### ACTIONS #########################
+
 
 # Master object container for actions
 class ActionsMaster:
@@ -234,6 +392,8 @@ class ActionsMaster:
     def __init__(self):
         with open('actions.json') as data_file:
             self.actions_dictionary = json.load(data_file)
+        self.swear_words = []
+        self.swear_response = "Hey, watch your language!"
         self.all_prepositions = []
         self.all_actions = []
         for action_key in self.actions_dictionary:
@@ -246,13 +406,12 @@ class ActionsMaster:
 
             prepositions_list = self.actions_dictionary[action_key].get("prepositions")
             if prepositions_list != None:
-                for preposition in prepositions_list:
-                    if not preposition in self.all_prepositions:
-                        self.all_prepositions.append(preposition)
+              for preposition in prepositions_list:
+                if not preposition in self.all_prepositions:
+                  self.all_prepositions.append(preposition)
 
     # This allows you to type "actions[<key>]" for convenience
-    def __getitem__(self, key):
-        return self.actions_dictionary[key]
+    def __getitem__(self, key): return self.actions_dictionary[key]
 
     # Add a function to handle an action
     def AddActionHandler(self, action_key, handler):
@@ -269,29 +428,27 @@ class ActionsMaster:
     def CheckForUnknownWords(self, command_words):
         for x in range(len(command_words)):
             word = command_words[x]
-            if (not word in self.all_actions) and (not word in self.all_prepositions) and (
-            not word in items.all_nouns) and (not word in items.all_adjectives) and (not word.isdigit()) and (
-            not word in ["GO", "THE", "A"]):
+            if (not word in self.all_actions) and (not word in self.all_prepositions) and (not word in items.all_nouns) and (not word in items.all_adjectives) and (not word.isdigit()) and (not word in ["GO","THE","A"]):
                 Print("I don't understand the word \"" + word + "\".")
                 state.oops_index = x
                 oops_words = []
                 for xx in range(len(command_words)):
-                    if not x == xx:
-                        oops_words.append(command_words[xx])
+                  if not x == xx:
+                    oops_words.append(command_words[xx])
                 state.oops_words = oops_words
                 return True
         return False
 
     # Given a list of words, attempt to resolve to a single item in the game. Complain and return None if this is impossible.
-    def ParseItem(self, command_substring, expects_number=False):
+    def ParseItem(self, command_substring, expects_number = False):
         if state.debug:
             print("Parse Item: " + ' '.join(command_substring))
-
-        command_substring = [x for x in command_substring if not x in ["THE", "A"]]
+        
+        command_substring = [x for x in command_substring if not x in["THE","A"]]
         if command_substring == []:
             Print("I don't understand that command.")
             return None
-
+        
         # Handle "IT"
         if (len(command_substring) == 1) and (command_substring[0] == "IT"):
             if (len(state.last_parsed_command) > 1) and (not state.last_parsed_command[1] == None):
@@ -302,7 +459,7 @@ class ActionsMaster:
 
         # Handle "ALL"
         if (len(command_substring) == 1) and (command_substring[0] == "ALL"):
-            return Token("Item", "ALL", ["ALL"])
+            return Token("Item","ALL",["ALL"])
 
         # First, find all possible item matches for these command words
         item_candidates = []
@@ -319,8 +476,7 @@ class ActionsMaster:
         for item_key in item_universe:
             mismatch = False
             for word in command_substring:
-                if (not word in items[item_key]["words"]) and (
-                        (not items[item_key].get("adjectives")) or (not word in items[item_key]["adjectives"])):
+                if (not word in items[item_key]["words"]) and ((not items[item_key].get("adjectives")) or (not word in items[item_key]["adjectives"])):
                     mismatch = True
                     break
             if not mismatch:
@@ -332,13 +488,13 @@ class ActionsMaster:
 
         if len(item_candidates) == 1:
             # Success!
-            return Token("Item", item_candidates[0], command_substring)
-
+            return Token("Item",item_candidates[0],command_substring)
+        
         # Need to disambiguate. Start by narrowing the candidates to items that are here.
 
         if (item_candidates[0] == "NUMBER"):
             if expects_number:
-                return Token("Item", item_candidates[0], command_substring)
+                return Token("Item",item_candidates[0],command_substring)
             else:
                 if len(item_candidates) == 2:
                     return Token("Item", item_candidates[1], command_substring)
@@ -347,18 +503,16 @@ class ActionsMaster:
 
         item_candidates_here = []
         for item_candidate in item_candidates:
-            if items.TestIfItemIsIn(item_candidate, player.inventory) or (
-                    (not locations.IsDark()) and items.TestIfItemIsIn(item_candidate,
-                                                                      player.GetPlayerLocation()["items"])):
+            if items.TestIfItemIsIn(item_candidate, player.inventory) or ((not locations.IsDark()) and items.TestIfItemIsIn(item_candidate, player.GetPlayerLocation()["items"])):
                 item_candidates_here.append(item_candidate)
 
         if len(item_candidates_here) == 1:
             # Success!
-            return Token("Item", item_candidates_here[0], command_substring)
+            return Token("Item",item_candidates_here[0],command_substring)
 
         if len(item_candidates_here) == 0:
             # Player has mentioned several items but none are here. Pick the first candidate and let the ParseAction() function deal with it
-            return Token("Item", item_candidates[0], command_substring)
+            return Token("Item",item_candidates[0],command_substring)
 
         # Finally, see if we can narrow the list by ignoring items that were only matched to an adjective
         item_candidates_here_nounsonly = []
@@ -367,30 +521,29 @@ class ActionsMaster:
                 if word in items[item_candidate]["words"]:
                     item_candidates_here_nounsonly.append(item_candidate)
                     break
-
+        
         if len(item_candidates_here_nounsonly) == 1:
             # Success!
-            return Token("Item", item_candidates_here_nounsonly[0], command_substring)
+            return Token("Item",item_candidates_here_nounsonly[0],command_substring)
 
         if len(item_candidates_here_nounsonly) > 1:
             item_candidates_here = item_candidates_here_nounsonly
 
         query_string = "Which " + str.lower(' '.join(command_substring)) + " do you mean:"
         for item_candidate in item_candidates_here:
-            if item_candidate == item_candidates_here[len(item_candidates_here) - 1]:
+            if item_candidate == item_candidates_here[len(item_candidates_here)-1]:
                 query_string += " or"
             query_string += " the " + items[item_candidate]["name"]
-            if (not item_candidate == item_candidates_here[len(item_candidates_here) - 1]) and (
-                    len(item_candidates_here) > 2):
+            if (not item_candidate == item_candidates_here[len(item_candidates_here)-1]) and (len(item_candidates_here) > 2):
                 query_string += ","
         Print(query_string + "?")
         state.disambiguate_list = []
         for item_candidate in item_candidates_here:
-            state.disambiguate_list.append(item_candidate)
-
+                state.disambiguate_list.append(item_candidate)
+        
         state.waiting_for_item = True
         return None
-
+    
     # Here is the main command parser function. You pass in a string and it parses it into known tokens and then reacts to them.
     def ParseCommand(self, command_string):
         state.this_user_input = command_string
@@ -401,26 +554,25 @@ class ActionsMaster:
         for word in command_words:
             if self.CheckForSwear(word):
                 return
-
+        
         if len(command_string) == 0:
             Print("Eh?")
             return
-
+            
         if self.CheckForUnknownWords(command_words):
             return
 
         # Handle OOPS
         if (command_words[0] == "OOPS"):
-            if (len(command_words) > 1) and (not state.oops_index == None):
+            if (len(command_words)>1) and (not state.oops_index == None):
                 new_command_words = []
                 for word in state.oops_words:
                     new_command_words.append(word)
-                for x in range(len(command_words) - 1):
-                    new_command_words.insert(state.oops_index + x, command_words[x + 1])
+                for x in range(len(command_words)-1):
+                    new_command_words.insert(state.oops_index + x, command_words[x+1])
                 command_words = new_command_words
             else:
-                Print(
-                    "You can use 'OOPS' to correct typing mistakes. Just type 'OOPS' and then the word you meant to type.")
+                Print("You can use 'OOPS' to correct typing mistakes. Just type 'OOPS' and then the word you meant to type.")
                 return
 
         # Handle case where we're waiting to see if the user confirmed a QUIT (by typing Y or N)
@@ -437,7 +589,7 @@ class ActionsMaster:
         # Handle case where we're waiting to see if the user confirmed a RESTART (by typing Y or N)
         if state.restart_pending and (len(command_words) == 1):
             if (command_string == 'Y') or (command_string == 'YES'):
-                Print("Restarting...\n\n")
+                Print("Restarting...\n")
                 state.restart_confirmed = True
                 return
             if (command_string == 'N') or (command_string == 'NO'):
@@ -488,8 +640,7 @@ class ActionsMaster:
             final_action_matches = []
 
             for potential_match in action_matches:
-                if preps_found and ((not self[potential_match].get("prepositions")) or (
-                not command_words[preposition_index] in self[potential_match].get("prepositions"))):
+                if preps_found and ((not self[potential_match].get("prepositions")) or (not command_words[preposition_index] in self[potential_match].get("prepositions"))):
                     continue
                 if (not preps_found) and (self[potential_match].get("prepositions")):
                     continue
@@ -501,10 +652,10 @@ class ActionsMaster:
                 if preps_found > 0:
                     Print("I don't understand that command.")
                     return
-
+                
                 # ... or did player just fail to type in a preposition at all ... then assume preposition and proceed
                 final_action_matches.append(action_matches[0])
-
+            
             # We assume that the player's action can't be ambiguous at this point
             # If it is ambiguous, then there are two actions with the same words and matching prepositions (not allowed)
             # Just in case, we set the action to the first matched action.
@@ -522,35 +673,33 @@ class ActionsMaster:
                 if state.debug:
                     Print("MIMIC action detected")
                 state.this_parsed_command[0].key = mimic_action
-
+            
             if preps_found:
                 # Handle case with one object, e.g. TURN ON FLASHLIGHT
                 if self[action_key].get("no_second_item?"):
                     user_item_words = []
-                    for x in range(1, len(command_words)):
+                    for x in range(1,len(command_words)):
                         if not x == preposition_index:
                             user_item_words.append(command_words[x])
                     if len(user_item_words) > 0:
-                        state.this_parsed_command.append(
-                            self.ParseItem(user_item_words, self[action_key].get("expects_number?")))
-
+                        state.this_parsed_command.append(self.ParseItem(user_item_words, self[action_key].get("expects_number?")))
+                
                 # Handle case with two objects, e.g. PUT X IN Y
                 else:
-
+                                     
                     # Can't have preposition right after action or last word in command
                     if (preposition_index < 2) or (preposition_index == len(command_words) - 1):
+                        
                         Print("I don't understand that command.")
                         return
-
+                    
                     # Add tokens to parsed_command for objects on either side of the preposition:
-                    state.this_parsed_command.append(
-                        self.ParseItem(command_words[1:preposition_index], self[action_key].get("expects_number?")))
+                    state.this_parsed_command.append(self.ParseItem(command_words[1:preposition_index], self[action_key].get("expects_number?")))
                     if not state.this_parsed_command[1] == None:
-                        state.this_parsed_command.append(self.ParseItem(command_words[preposition_index + 1:]))
+                        state.this_parsed_command.append(self.ParseItem(command_words[preposition_index+1:]))
 
             elif len(command_words) > 1:
-                state.this_parsed_command.append(
-                    self.ParseItem(command_words[1:], self[action_key].get("expects_number?")))
+                state.this_parsed_command.append(self.ParseItem(command_words[1:], self[action_key].get("expects_number?")))
 
             for this_token in state.this_parsed_command:
                 if not this_token:
@@ -593,8 +742,7 @@ class ActionsMaster:
                     prompt_string += " " + actions[action_key]["prepositions"][0].lower()
             Print(prompt_string + "?")
             state.waiting_for_item = True
-        elif actions[action_key].get("prepositions") and (not actions[action_key].get("no_second_item?")) and len(
-                state.this_parsed_command) < 3:
+        elif actions[action_key].get("prepositions") and (not actions[action_key].get("no_second_item?")) and len(state.this_parsed_command) < 3:
             prompt_string = "What do you want to " + state.this_parsed_command[0].user_words[0].lower()
             if not items[state.this_parsed_command[1].key].get("no_article?"):
                 prompt_string += " the"
@@ -603,7 +751,7 @@ class ActionsMaster:
                 prompt_string += state.this_parsed_command[0].user_words[1].lower()
             else:
                 prompt_string += actions[action_key]["prepositions"][0].lower()
-            Print(prompt_string + "?")
+            Print(prompt_string + "?")    
             state.waiting_for_item = True
         else:
             # Successful parse!
@@ -621,7 +769,7 @@ class ActionsMaster:
 
     # Once we have parsed the command into tokens with at least one action, we continue to parse...
     def ParseAction(self, parsed_command):
-
+        
         state.parse_successful = True
         # (setting this flag means that this command is considered parsed and counts as a player turn)
 
@@ -705,13 +853,14 @@ class ActionsMaster:
 
 ######################### ITEMS #########################
 
+
 # Master object container for items
 class ItemsMaster:
     # Constructor
     def __init__(self):
         self.all_adjectives = []
         self.all_nouns = []
-
+        
         with open('items.json') as data_file:
             self.items_dictionary = json.load(data_file)
         for item_key in self.items_dictionary:
@@ -719,16 +868,15 @@ class ItemsMaster:
         for item_key in self.items_dictionary:
             adjectives_list = self.items_dictionary[item_key].get("adjectives")
             if adjectives_list != None:
-                # If adjectives are defined, we add a unique identifier to words list (combine first adj + first noun)
-                #  This is for situations where there's a red button, a blue button, etc.
-                self.items_dictionary[item_key]["words"].append(
-                    adjectives_list[0] + "_" + self.items_dictionary[item_key]["words"][0])
-                for adjective in adjectives_list:
-                    if not adjective in self.all_adjectives:
-                        self.all_adjectives.append(adjective)
+              # If adjectives are defined, we add a unique identifier to words list (combine first adj + first noun)
+              #  This is for situations where there's a red button, a blue button, etc.
+              self.items_dictionary[item_key]["words"].append(adjectives_list[0] + "_" + self.items_dictionary[item_key]["words"][0])
+              for adjective in adjectives_list:
+                if not adjective in self.all_adjectives:
+                  self.all_adjectives.append(adjective)
             for word in self.items_dictionary[item_key]["words"]:
-                if not word in self.all_nouns:
-                    self.all_nouns.append(word)
+              if not word in self.all_nouns:
+                self.all_nouns.append(word)
             self.items_dictionary[item_key]["key"] = item_key
             self.items_dictionary[item_key]["handler"] = None
 
@@ -738,22 +886,33 @@ class ItemsMaster:
                 self.PlaceItemIn(item_key, item_loc)
             elif isinstance(item_loc, list):
                 if self.items_dictionary[item_key].get("takeable?") and (len(item_loc) > 1):
-                    print("ERROR: takeable items can't have multiple init_loc")
+                  print("ERROR: takeable items can't have multiple init_loc")
                 for il in item_loc:
-                    self.PlaceItemIn(item_key, il)
+                  self.PlaceItemIn(item_key, il)
 
     # This allows you to type "actions[<key>]" for convenience
-    def __getitem__(self, key):
-        return self.items_dictionary[key]
+    def __getitem__(self, key): return self.items_dictionary[key]
 
     def AddItemHandler(self, item_key, handler):
         self[item_key]["handler"] = handler
+
+    # Serialize items to a dictionary, excluding descriptions and immutable fields
+    def Serialize(self):
+        serialize_dict = {}
+        for item in self.items_dictionary.values():
+            item_entry = {}
+            for key, value in item.items():
+                if key not in ["name","words","adjectives","init_loc","long_desc","examine_string","handler"]:
+                    item_entry[key] = value
+            if item_entry:
+                serialize_dict[item["key"]] = item_entry
+        return(serialize_dict)
 
     # Returns the key of an item, checking first to see if the item is already a key
     # Point of this is to make it easy to create helper functions that take an item
     #  as a parameter and allow you to pass in either the item or the item's key
     def ItemKey(self, item):
-        if isinstance(item, str):
+        if isinstance(item,str):
             return item
         else:
             return item["key"]
@@ -766,12 +925,12 @@ class ItemsMaster:
         for item in player.GetPlayerLocation()["items"]:
             items_present.append(item)
         return self.FindItemsInside(items_present)
-
+    
     # appends the item contents to the end of the item description
     def AppendItemContentsToDescription(self, item_string, item_key, indent):
         item = self[item_key]
         if item.get("is_container?") and (not item.get("openable?") or item.get("is_open?")):
-            if item_string[len(item_string) - 1] == '.':
+            if item_string[len(item_string)-1] == '.':
                 item_string += " It"
             else:
                 item_string += ", which"
@@ -779,13 +938,12 @@ class ItemsMaster:
                 context.Print(item_string + " is empty")
             else:
                 context.Print(item_string + " contains:")
-                self.ListItems(item["contents"], indent=indent + 2)
+                self.ListItems(item["contents"], indent=indent+2)
         else:
-            context.Print(item_string)
+            context.Print(item_string)    
 
-            # List a set of items, passed in by key (e.g. player inventory), including container contents
-
-    def ListItems(self, item_list, decorate="@", article="a", indent=0, blank_line=False, announce_if_nothing=True):
+    # List a set of items, passed in by key (e.g. player inventory), including container contents
+    def ListItems(self, item_list, decorate = "@", article = "a", indent = 0, blank_line = False, announce_if_nothing = True):
         if (len(item_list) == 0) and announce_if_nothing:
             Print(' ' * indent + "Nothing")
         else:
@@ -793,7 +951,7 @@ class ItemsMaster:
             if decorate == "":
                 decorate = "@"
             decorate = decorate.split('@')
-
+            
             for item_key in item_list:
                 if self[item_key].get("do_not_list?"):
                     continue
@@ -814,7 +972,7 @@ class ItemsMaster:
         return return_list
 
     # is this item in the list of item keys (looking into containers)
-    def TestIfItemIsIn(self, item, container, container_must_be_open=True):
+    def TestIfItemIsIn(self, item, container, container_must_be_open = True):
         item_key = self.ItemKey(item)
         container_contents = []
         if isinstance(container, list):
@@ -828,9 +986,8 @@ class ItemsMaster:
         if item_key in container_contents:
             return True
         for item in container_contents:
-            if self.TestIfItemIsIn(item_key, self[item]["contents"]) and (
-                    (not container_must_be_open) or self[item].get("is_open?")):
-                return True
+            if self.TestIfItemIsIn(item_key, self[item]["contents"]) and ((not container_must_be_open) or self[item].get("is_open?")):
+                return True            
         return False
 
     # Returns true if the item is present (in inventory or in the room) and visible?
@@ -849,7 +1006,7 @@ class ItemsMaster:
         Print("You can't see any " + str.lower(word) + " here!")
 
     # Obtains a long description for the item (with backups if that field hasn't been specified in the locations file)
-    def GetLongDescription(self, item, article=""):
+    def GetLongDescription(self, item, article = ""):
         item_key = self.ItemKey(item)
         item = self[item_key]
         item_desc = item.get("long_desc")
@@ -859,12 +1016,12 @@ class ItemsMaster:
         # Add article (a, the), if requested
         if len(article) > 0:
             starts_with_vowel = (item_desc[0] in "aeiou")
-            if not article[len(article) - 1] == ' ':
+            if not article[len(article)-1] == ' ':
                 item_desc = " " + item_desc
-            if (article in ["a", "A"]) and starts_with_vowel:
+            if (article in ["a","A"]) and starts_with_vowel:
                 item_desc = "n" + item_desc
             item_desc = article + item_desc
-
+            
         return item_desc
 
     # Does a "get all"
@@ -918,7 +1075,7 @@ class ItemsMaster:
             for container_key in self.items_dictionary:
                 if item_key in self[container_key]["contents"]:
                     self[container_key]["contents"].remove(item_key)
-
+                    
         player.inventory.append(item_key)
 
     # Does a "drop all"
@@ -952,7 +1109,7 @@ class ItemsMaster:
         if len(put_list) == 0:
             print_str = "You aren't carrying anything"
             if len(player.inventory) >= 1:
-                print_str += " that you can place in the pack"
+                print_str += " that you can place in that"
             Print(print_str + "!")
             return
 
@@ -1005,12 +1162,13 @@ class ItemsMaster:
             # Attempt to place item in a container
             if not item_placed:
                 for container_key in self.items_dictionary:
-                    if (container_key == location_key) and (self.items_dictionary[container_key].get("is_container?")):
+                    if container_key == location_key:
                         self.items_dictionary[container_key]["contents"].append(item_key)
                         break
 
 
 ######################### EVENTS #########################
+
 
 class Event:
     # Constructor
@@ -1018,11 +1176,13 @@ class Event:
         self.trigger_turn = trigger_turn
         self.event_func = event_func
 
-
 class EventsMaster:
     # Constructor
     def __init__(self):
         self.events = []
+
+    def Serialize(self):
+        return self.events
 
     # Each turn, we go through the event queue to see if any are supposed to trigger this turn.
     def CheckEvents(self, turn_counter):
@@ -1052,10 +1212,8 @@ class EventsMaster:
 def Print(string):
     context.Print(string)
 
-
 def PrintItemInString(default_string, item):
     context.PrintItemInString(default_string, item)
-
 
 ######################### MAIN LOOP #########################
 
@@ -1071,31 +1229,52 @@ action_handlers.Register(context)
 item_handlers.Register(context)
 location_handlers.Register(context)
 
-
 # Here is the MAIN LOOP
 def Play():
+    global player
+    global locations
+    global actions
+    global items
+    global events
+    global state
+    global context
+    restoring = False
+    restore_package = None
     while not state.quit_confirmed:
-        globals.IntroText(context)
         globals.InitialSetup(context)
+        if restoring:
+            context.ProcessRestorePackage(restore_package)
+            restore_package = None
+            restoring = False
+        else:
+            globals.IntroText(context)
+
         locations.DoLook()
-        while not (state.quit_confirmed or state.restart_confirmed):
+        while not (state.quit_confirmed or state.restart_confirmed or state.restore_requested):
             print()
             actions.ParseCommand(input("> "))
             state.PostProcess()
 
-        # Handle restart
-        if state.restart_confirmed:
-            player.__init__()
-            locations.__init__()
-            actions.__init__()
-            items.__init__()
-            events.__init__()
-            state.__init__()
-            context.__init__(player, locations, actions, items, state, events)
+            if state.restore_requested:
+                restore_package = context.LoadRestorePackage()
+                if restore_package:
+                    restoring = True
+                else:
+                    state.restore_requested = False
+
+        # Handle restart or restore
+        if state.restart_confirmed or restoring:
+            player = Player()
+            locations = LocationsMaster()
+            actions = ActionsMaster()
+            items = ItemsMaster()
+            events = EventsMaster()
+            state = State()
+            context = Context(player, locations, actions, items, state, events)
             action_handlers.Register(context)
             item_handlers.Register(context)
             location_handlers.Register(context)
 
 
 if __name__ == "__main__":
-    Play()
+   Play()

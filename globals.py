@@ -9,7 +9,7 @@ def IntroText(context):
 def InitialSetup(context):
     context.player.SetPlayerLocation("OUTSIDE_MANOR")
     context.player.hunger_level = 0
-    context.actions.swear_words = {"SHIT", "DAMN", "FUCK"}
+    context.actions.swear_words = ["SHIT", "DAMN", "FUCK"]
     context.actions.swear_response = "Let's keep this PG, folks. Next time there'll be consequences."
     context.events.CreateEventInNMoves(CheckHunger, 0)
 
