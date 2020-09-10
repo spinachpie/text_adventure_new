@@ -89,9 +89,16 @@
   "MAP": {
     "name": "Forest Service map",
     "words": ["MAP"],
-    "examine_string": " ________________________________________________\n|___________________Maple_St_____________________|\n|                    ____                        |\n|                   |____|                       |\n|                     /park                      |\n|                    /                           |\n|         ^         /                            |\n|        |_|_______/                             |\n|                  |                             |\n|                  |                             |\n|                  |                             |\n|                  |                             |\n|            Scenic|                             |\n|              View|                             |\n|                  /                             |\n|                 /                              |\n|                /                               |\n|               /                                |\n|              /                                 |\n|            _/                    *             |\n|           |_|                  Nook's          |\n|                                 Cave           |\n|                                             N  |\n|                                           W + E|\n|_____________________________________________S__|",
+    "examine_string": " ________________________________________________\n|___________________Maple_St_____________________|\n|                    ____                        |\n|                   |____|                       |\n|                     /park                      |\n|                    /                           |\n|         ^         /                            |\n|        |_|_______/                             |\n|                  |                 !!!         |\n|                  |                             |\n|                  |                             |\n|                  |                             |\n|            Scenic|                             |\n|              View|                             |\n|                  /                             |\n|                 /                              |\n|                /                               |\n|               /                                |\n|              /                                 |\n|            _/                    *             |\n|           |_|                  Nook's          |\n|                                 Cave           |\n|                                             N  |\n|                                           W + E|\n|_____________________________________________S__|",
     "adjectives": ["FOREST", "SERVICE"],
     "do_not_list?": false,
+    "takeable?": true,
+    "init_loc": "PARK"
+  },
+  "COMPASS": {
+    "name": "Small Compass",
+    "words": ["COMPASS"],
+    "adjectives": ["SMALL"],
     "takeable?": true,
     "init_loc": "PARK"
   },
@@ -111,11 +118,11 @@
     "init_loc": "VOID_BASEMENT",
     "light_source?": true
   },
-  "MUFFIN": {
-    "name": "blueberry muffin",
-    "long_desc": "blueberry muffin",
-    "words": ["MUFFIN"],
-    "adjectives": ["BLUEBERRY"],
+  "SANDWICH": {
+    "name": "ham sandwich",
+    "long_desc": "ham sandwich",
+    "words": ["SANDWICH"],
+    "adjectives": ["HAM"],
     "takeable?": true,
     "init_loc": "LUNCHBOX",
     "is_food?": true
@@ -148,6 +155,7 @@
     "words": ["FLASHLIGHT", "LIGHT"],
     "adjectives": ["FLASH"],
     "takeable?": true,
+    "is_open?": true,
     "init_loc": "BACKPACK"
   },
   "BATTERY": {
@@ -155,7 +163,7 @@
     "words": ["BATTERY", "BATTERIES"],
     "adjectives": ["NEW"],
     "takeable?": true,
-    "init_loc": "VOID_UPPER"
+    "init_loc": "BUNKER"
   },
   "DUCKY": {
     "name": "ruber ducky",

@@ -49,6 +49,14 @@ def GetFrom(context, item, second_item):
         else:
             context.items.GetItem(item["key"])
 
+def Remove(context, item):
+    for container_key in context.items.items_dictionary:
+        if item["key"] in context.items[container_key]["contents"]:
+            context.PrintItemInString("(from @)\n", context.items[container_key])
+            GetFrom(context, item, context.items[container_key])
+            return
+    context.PrintItemInString("I don't understand how to do that.", item)
+
 def Drop(context, item):
     if item["key"] == "ALL":
         context.items.DropAll()
@@ -186,7 +194,7 @@ def Insert(context, item):
     context.Print("You can't insert that.")    
 
 def PutIn(context, item, second_item):
-    if item["key"] == "ALL":
+    if (item["key"] == "ALL") and (not second_item == None) and second_item.get("is_container?"):
         context.items.PutAllIn(second_item)
     elif not item["key"] in context.player.inventory:
         context.PrintItemInString("You're not holding the @.", item)
@@ -223,6 +231,7 @@ def Register(context):
     actions = context.actions
     actions.AddActionHandler("GET", Get)
     actions.AddActionHandler("GET_FROM", GetFrom)
+    actions.AddActionHandler("REMOVE", Remove)
     actions.AddActionHandler("DROP", Drop)
     actions.AddActionHandler("EXAMINE", Examine)
     actions.AddActionHandler("OPEN", Open)

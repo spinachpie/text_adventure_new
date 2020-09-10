@@ -132,10 +132,20 @@ def PunchingBag(context, action, other_item, item_is_secondary):
     return False
 
 def Battery(context, action, other_item, item_is_secondary):
-    if (action["key"] in "PUT_INTO") and (other_item["key"] == "FLASHLIGHT") and not item_is_secondary:
+    if (action["key"] == "PUT_INTO") and (other_item["key"] == "FLASHLIGHT") and not item_is_secondary:
         context.Print("You insert the battery into the flashlight.")
         context.items.MoveItemTo("BATTERY", "FLASHLIGHT")
-    return True
+        return True
+    if (action["key"] in ["GET", "GET_FROM", "REMOVE"]) and ("BATTERY" in context.items["FLASHLIGHT"]["contents"]) and (not item_is_secondary):
+        if (action["key"] == "GET_FROM") and ((other_item == None) or (not other_item["key"] == "FLASHLIGHT")):
+            return False
+        print_str = "With a little effort, you remove the battery from the flashlight."
+        context.items.MoveItemTo("BATTERY", "PLAYER")
+        if context.items["FLASHLIGHT"].get("light_source?"):
+            print_str += " The flashlight's bulb goes dark."
+            context.items["FLASHLIGHT"]["light_source?"] = False
+        context.Print(print_str)
+        return True
 
 def Flashlight(context, action, other_item, item_is_secondary):
     if action["key"] in ["TURN_ON", "LIGHT"]:

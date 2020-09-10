@@ -9,6 +9,7 @@
   "NO" : {"words": ["NO"], "suppress_in_actions_list?": true },
   "GET": { "words": ["GET", "TAKE"], "requires_object?": true, "supports_all?": true },
   "GET_FROM": { "words": ["GET", "TAKE", "REMOVE"], "requires_object?": true, "supports_all?": true, "prepositions" : ["FROM"]},
+  "REMOVE": { "words":  ["REMOVE"], "requires_object?": true},
   "PICK_UP": { "words": ["PICK"], "requires_object?": true, "prepositions" : ["UP"], "no_second_item?": true, "mimic": "GET" },
   "DROP": { "words": ["DROP", "LEAVE", "TOSS"], "requires_object?": true, "supports_all?": true },
   "ATTACK": { "words": ["ATTACK", "FIGHT", "KILL", "PUNCH", "HIT", "KICK"], "requires_object?": true},
