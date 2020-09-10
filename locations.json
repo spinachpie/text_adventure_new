@@ -35,7 +35,7 @@
   },
   "PARK": {
     "brief_desc": "Small Park",
-    "long_desc": "This is a slightly-overgrown park, with some picnic tables and even an old swingset. A small trail leads to the southeast. You can also cross the street to the north.",
+    "long_desc": "This is a slightly-overgrown park, with some picnic tables and even an old swingset. A small trail leads to the southwest. You can also cross the street to the north.",
     "dark?": false,
     "north":"OUTSIDE_MANOR",
     "south": "",
@@ -44,7 +44,7 @@
     "northeast": "",
     "northwest": "",
     "southeast": "",
-    "southwest": "",
+    "southwest": "WOODS_3",
     "up": "",
     "down": "",
     "in": "",
