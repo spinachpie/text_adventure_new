@@ -148,6 +148,49 @@ def ElevatorBottomLook(context):
             look_string += " The button is glowing."
     context.Print(look_string)
 
+
+def FireSwamp(context):
+    scenario = context.state.turn_counter % 3
+    if scenario == 0:
+        context.Print ("Who would expect quicksand in the woods? Not you at least. You are sucked in before you can say 'aaaas yoooou wiiiiiiish'.")
+    if scenario == 1:
+        context.Print ("You are suddenly attacked by a Rodent Of Unusual Size.")
+    if scenario == 2:
+        context.Print ("Fire shoots out of the ground, burning you to a crisp.")
+    context.player.Kill()
+
+def WoodsHandler(context, action, item1, item2):
+    if action["key"] in ["NORTH", "SOUTH", "EAST", "WEST", "NORTHEAST", "NORTHWEST", "SOUTHEAST", "SOUTHWEST"]:
+        new_location_key = context.locations[context.player.location].get(str.lower(action["key"]))
+        if new_location_key == "XX_STEEP":
+            context.Print ("It's too steep to go that direction.")
+            return True
+        if new_location_key == "XX_RIVER":
+            context.Print ("A river blocks you from moving that way.")
+            return True
+        if new_location_key == "XX_CLIFF":
+            context.Print ("There is a cliff to this direction.")
+            return True
+        if new_location_key == "XX_WATERFALL":
+            context.Print ("You are looking out over a magnifecent waterfall. Unfortunately that means that you can't continue that way.")
+            return True
+        if new_location_key == "XX_FENCE":
+            context.Print ("A tall chain link fence stops you from moving in that direction.")
+            return True
+        if not context.items.TestIfItemIsIn("COMPASS", context.player.inventory):
+            if (not context.locations[context.player.location].get("path?")) or (new_location_key and (not context.locations[new_location_key].get("path?"))):
+                context.Print("You find it hard to get your bearings as you stumble through the woods.\n")
+                context.locations.EnterRoom("LOST")
+                return True
+        if (((context.player.location == "WOODS_2") and (action["key"] == "SOUTHEAST"))
+                or ((context.player.location == "WOODS_8") and (action["key"] == "NORTHWEST"))
+                or ((context.player.location == "WOODS_11") and (action["key"] == "SOUTHEAST"))
+                or ((context.player.location == "WOODS_17") and (action["key"] == "NORTHWEST"))):
+            context.Print("You cross a path perpendicularly and re-enter the woods on the other side.\n")
+    return False
+
+
+
 # Here is where you "bind" your item handler function to a specific item.
 def Register(context):
     locations = context.locations
@@ -160,3 +203,33 @@ def Register(context):
     locations.AddLookHandler("ELEVATOR_TOP", ElevatorTopLook)
     locations.AddLookHandler("ELEVATOR_MIDDLE", ElevatorMiddleLook)
     locations.AddLookHandler("ELEVATOR_BOTTOM", ElevatorBottomLook)
+    locations.AddWhenHereHandler("WOODS_25", WoodsHandler)
+    locations.AddWhenHereHandler("WOODS_24", WoodsHandler)
+    locations.AddWhenHereHandler("WOODS_23", WoodsHandler)
+    locations.AddWhenHereHandler("WOODS_22", WoodsHandler)
+    locations.AddWhenHereHandler("WOODS_21", WoodsHandler)
+    locations.AddWhenHereHandler("WOODS_20", WoodsHandler)
+    locations.AddWhenHereHandler("WOODS_19", WoodsHandler)
+    locations.AddWhenHereHandler("WOODS_18", WoodsHandler)
+    locations.AddWhenHereHandler("WOODS_17", WoodsHandler)
+    locations.AddWhenHereHandler("WOODS_16", WoodsHandler)
+    locations.AddWhenHereHandler("WOODS_15", WoodsHandler)
+    locations.AddWhenHereHandler("WOODS_14", WoodsHandler)
+    locations.AddWhenHereHandler("WOODS_13", WoodsHandler)
+    locations.AddWhenHereHandler("WOODS_12", WoodsHandler)
+    locations.AddWhenHereHandler("WOODS_11", WoodsHandler)
+    locations.AddWhenHereHandler("WOODS_10", WoodsHandler)
+    locations.AddWhenHereHandler("WOODS_9", WoodsHandler)
+    locations.AddWhenHereHandler("WOODS_8", WoodsHandler)
+    locations.AddWhenHereHandler("WOODS_7", WoodsHandler)
+    locations.AddWhenHereHandler("WOODS_6", WoodsHandler)
+    locations.AddWhenHereHandler("WOODS_5", WoodsHandler)
+    locations.AddWhenHereHandler("WOODS_4", WoodsHandler)
+    locations.AddWhenHereHandler("WOODS_3", WoodsHandler)
+    locations.AddWhenHereHandler("WOODS_2", WoodsHandler)
+    locations.AddWhenHereHandler("WOODS_1", WoodsHandler)
+    locations.AddLookHandler("WOODS_9", FireSwamp)
+
+
+
+
