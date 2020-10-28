@@ -512,8 +512,9 @@
   },
   "WOODS_3": {
     "brief_desc": "Woods Path",
-    "long_desc": "A path winds along, running northeast to southwest.",
+    "long_desc": "A path winds along, running northeast to southwest. You can also walk into the woods in whatever direction you want, if that's what you fancy.",
     "dark?": false,
+    "path?": true,
     "north": "XX_FENCE",
     "south": "WOODS_8",
     "east": "WOODS_4",
@@ -563,8 +564,9 @@
   },
   "WOODS_6": {
     "brief_desc": "Outside Forest Service Station",
-    "long_desc": "A small wooden building sits to the west, with the Forest Service logo above the front door. A trail leads to the east.",
+    "long_desc": "A small wooden building sits to the west, with the Forest Service logo above the front door. A trail leads to the east, but if you're more of the adventurous type, you could also head into the woods in any direction.",
     "dark?": false,
+    "path?": true,
     "north": "WOODS_1",
     "south": "WOODS_11",
     "east": "WOODS_7",
@@ -580,8 +582,9 @@
   },
   "WOODS_7": {
     "brief_desc": "Woods Path Intersection",
-    "long_desc": "This is a 3-way intersection of trails, leading northeast, south, and west.",
+    "long_desc": "This is a 3-way intersection of trails, leading northeast, south, and west. You can also go exploring off the beaten path.",
     "dark?": false,
+    "path?": true,
     "north": "WOODS_2",
     "south": "WOODS_12",
     "east": "WOODS_8",
@@ -613,7 +616,7 @@
     "out": ""
   },
   "WOODS_9": {
-    "brief_desc": "Woods",
+    "brief_desc": "Fire Swamp",
     "long_desc": "",
     "dark?": false,
     "north": "WOODS_4",
@@ -665,8 +668,9 @@
   },
   "WOODS_12": {
     "brief_desc": "Woods Path",
-    "long_desc": "A trail takes a turn, continuing to the north and southwest. The view here is spectacular, and you can see for miles to the south.",
+    "long_desc": "A trail takes a turn, continuing to the north and southwest. The view here is spectacular, and you can see for miles to the south. You can also go into the woods in any direction.",
     "dark?": false,
+    "path?": true,
     "north": "WOODS_7",
     "south": "WOODS_17",
     "east": "WOODS_13",
@@ -733,8 +737,9 @@
   },
   "WOODS_16": {
     "brief_desc": "Firewatch Tower Base",
-    "long_desc": "Steps climb up to the Forest Service Firewatch Tower high above you.",
+    "long_desc": "Steps climb up to the Forest Service Firewatch Tower high above you. A path leads to the northeast, or you can venture off into the woods.",
     "dark?": false,
+    "path?": true,
     "north": "WOODS_11",
     "south": "WOODS_21",
     "east": "WOODS_17",
@@ -937,7 +942,7 @@
   },
   "FIREWATCH": {
     "brief_desc": "Firewatch Tower",
-    "long_desc": "You are inside a room at the top of the Firewatch Tower, which used to house a Forest Service staff member. Steps lead downwards.",
+    "long_desc": "You are inside a room at the top of the Firewatch Tower, which is supposed to house a Forest Service staff member. Steps lead downwards.",
     "dark?": false,
     "north": "",
     "south": "",
@@ -955,6 +960,23 @@
   "MOUNTAINSIDE_PATH": {
     "brief_desc": "Mountainside Path",
     "long_desc": "You are between a rock and a hard place. Or rather, a mountain and a steep drop. This natural shelf sits on the edge. The exit is to the northeast.",
+    "dark?": false,
+    "north": "",
+    "south": "",
+    "east": "",
+    "west": "",
+    "northeast": "WOODS_21",
+    "northwest": "",
+    "southeast": "",
+    "southwest": "",
+    "up": "",
+    "down": "",
+    "in": "",
+    "out": ""
+  },
+  "LOST": {
+    "brief_desc": "Woods",
+    "long_desc": "You are lost in the woods.",
     "dark?": false,
     "north": "",
     "south": "",
