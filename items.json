@@ -42,6 +42,13 @@
     "do_not_list?": true,
     "init_loc": "MASTER_BEDROOM"
   },
+  "MASTER_KEY": {
+    "name": "master key",
+    "words": ["KEY"],
+    "adjectives": ["MASTER"],
+    "takeable?": true,
+    "init_loc": "VOID_BASEMENT"
+  },
   "SIGN": {
     "name": "trailhead sign",
     "words": ["SIGN"],
@@ -96,7 +103,7 @@
     "init_loc": "PARK"
   },
   "COMPASS": {
-    "name": "Small Compass",
+    "name": "small compass",
     "words": ["COMPASS"],
     "adjectives": ["SMALL"],
     "takeable?": true,

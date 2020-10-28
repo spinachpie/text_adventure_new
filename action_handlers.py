@@ -121,7 +121,7 @@ def Inventory(context):
 
 def Help(context):
     context.Print("This is a text adventure game.")
-    context.Print("Enter commands like \'NORTH\' or \'TAKE COIN\' to tell the computer what you would like to do.")
+    context.Print("Enter commands like \'NORTH\'(or 'N') or \'TAKE COIN\' to tell the computer what you would like to do.")
     context.Print("For a full list of commands, type \'ACTIONS\'.")
 
 def PrintAction(context, action_key):
@@ -157,7 +157,7 @@ def Actions(context):
             continue
 
         PrintAction(context, action_key)
-    
+    #insert witty remark here
     print("\nOther actions:")
     for action_key in sorted(context.actions.actions_dictionary):
         if context.actions[action_key].get("suppress_in_actions_list?"):
@@ -182,10 +182,10 @@ def Restart(context):
     context.Print("Are you sure you want to restart (Y/N)?")
 
 def Yes(context):
-    context.Print("You sound really positive!")
+    context.Print("I agree!")
 
 def No(context):
-    context.Print("You sound awfully negative!")
+    context.Print("I know, it's so unfair.")
 
 def Wait(context):
     context.Print("Time passes...")
@@ -226,6 +226,13 @@ def Debug(context):
 def Twiggy2(context):
     context.locations.EnterRoom("THE_VOID") 
 
+def Chicken(context):
+    context.Print("ERROR 404: Chicken Egg does not compute ... Chicken Egg does not compute ... Ch101e0 E1g d001 n01 c0mpu10 ... 1101001 001 1010 000 1101011 ... REACTOR MELTDOWN IN 3 ... 2 ... 1 ... ")
+    context.player.Kill()
+
+def Credits(context):
+    context.Print("\n Thank you for playing 'ERIK_GAME'\n\nStory: Erik\nCharacters: Erik\nAll the hard coding stuff: All Erik\nSound Design: Erik \nThat cool map: Erik (It was actually Erik and it took forever)\nPublishing: Erik Inc\n\nProud Sponsors: \nAir Erik\nMicrosoft \nThe Daily Bok\nThe Belgian Department of Agriculture\n\nSpecial Thanks To:\nFinn\nErik\nErik's hour and a half of \"PE\" class\nTomas (He helped a tiny bit)")
+
 # Here is where you "bind" your action handler function to a specific action.
 def Register(context):
     actions = context.actions
@@ -256,3 +263,5 @@ def Register(context):
     actions.AddActionHandler("TURN_OFF", TurnOff)
     actions.AddActionHandler("TWIGGY2", Twiggy2)
     actions.AddActionHandler("EAT", Eat)
+    actions.AddActionHandler("CHICKEN", Chicken)
+    actions.AddActionHandler("CREDITS", Credits)

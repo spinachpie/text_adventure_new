@@ -44,6 +44,8 @@
   "EXTINGUISH": { "words": ["EXTINGUISH"], "requires_object?": true},
   "BLOW_OUT": { "words": ["BLOW"], "requires_object?": true, "prepositions" : ["OUT"], "no_second_item?": true, "mimic": "EXTINGUISH" },
   "TWIGGY2": {"words": ["TWIGGY2"], "suppress_in_actions_list?": true},
+  "CHICKEN": {"words": ["WHATCAMEFIRSTTHECHICKENORTHEEGG"], "suppress_in_actions_list?": true},
+  "CREDITS": {"words": ["CREDITS"], "suppress_in_actions_list?": false},
   "DEBUG" : {"words": ["DEBUG"], "suppress_in_actions_list?": true },
   "EAT": { "words": ["EAT"], "requires_object?": true },
   "PUSH": { "words": ["PUSH", "PRESS"], "requires_object?": true }

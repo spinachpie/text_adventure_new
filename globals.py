@@ -1,7 +1,7 @@
 # This function is called as the game is starting. Use it to print introduction text.
 def IntroText(context):
     context.Print(
-        "context.print 'Welcome adventurer'\n{inserting items into convenient locations} \nplayer.set == return True \nloading...[Traveling through hyperspace]  \n \nGame created by Erik (with a little help) \n \nType ? for help \nSave game by typing 'SAVE' and restore a save by typing 'RESTORE'")
+        "context.print 'Welcome adventurer'\n{inserting items into convenient locations} \nplayer.set == return True \nloading...[Traveling through hyperspace]  \n \nGame created by Erik (with a little help) \n \nType ? for help \nSave game by typing 'SAVE' and restore a save by typing 'RESTORE'\n---------------------------------------------------------------------------")
     print()
 
 # This function is called as the game is starting. Use it to initialize game settings
