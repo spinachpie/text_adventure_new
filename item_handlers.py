@@ -1,5 +1,5 @@
 
-### THIS FILE CONTAINS ACTION HANDLERS FOR YOUR ITEMS ###
+### THIS FILE CONTAINS ITEM HANDLERS FOR YOUR ITEMS ###
 
 # To add a new item handler, first create a function for your item
 #  and then "bind" the handler to your item in the bottom section of the file.
@@ -176,18 +176,25 @@ def Flashlight(context, action, other_item, item_is_secondary):
 
 def Sign(context, action, other_item, item_is_secondary):
     if action["key"] == "EXAMINE":
-        context.items.MoveItemTo("CHEESY_PUN", "PARK")
-        context.items.MoveItemTo("INVENTORY_SHEET", "PARK")
-        context.items.MoveItemTo("MISSING_POSTER", "PARK")
-        context.items.MoveItemTo("PIANO_LESSON", "PARK")
-        context.items.MoveItemTo("MAP", "PARK")
-        context.Print("This is a large wooden sign, with an overhang to protect against the precipitation.")
+        if not context.items["SIGN"].get("touched?"):
+            context.items["SIGN"]["touched?"] = True
+            context.items.MoveItemTo("CHEESY_PUN", "SIGN")
+            context.items.MoveItemTo("INVENTORY_SHEET", "SIGN")
+            context.items.MoveItemTo("MISSING_POSTER", "SIGN")
+            context.items.MoveItemTo("PIANO_LESSON", "SIGN")
+            context.items.MoveItemTo("MAP", "SIGN") 
+        print_string = "This is a large wooden sign, with an overhang to protect against the precipitation." 
+        if not context.items["SIGN"]["contents"]:
+            context.Print(print_string)
+        else:
+            context.Print(print_string + " Attached to the sign are the following papers:")
+            context.items.ListItems(context.items["SIGN"]["contents"], indent=2) 
         return True
     return False
 
 def Matches(context, action, other_item, item_is_secondary):
     if (action["key"] == "LIGHT"):
-        context.Print("You light one of the matches, and it burns out after a couple seconds.")
+        context.Print("You light one of the matches, and it burns out after a couple seconds. Perhaps you should light something with the match.")
         return True
 
 def Candle(context, action, other_item, item_is_secondary):

@@ -54,7 +54,8 @@
     "words": ["SIGN"],
     "examine_string": "",
     "adjectives": ["TRAILHEAD"],
-    "do_not_list?": false,
+    "do_not_list?": true,
+    "is_open?": true,
     "init_loc": "PARK"
   },
   "MISSING_POSTER": {
@@ -100,14 +101,14 @@
     "adjectives": ["FOREST", "SERVICE"],
     "do_not_list?": false,
     "takeable?": true,
-    "init_loc": "PARK"
+    "init_loc": "VOID_UPPER"
   },
   "COMPASS": {
     "name": "small compass",
     "words": ["COMPASS"],
     "adjectives": ["SMALL"],
     "takeable?": true,
-    "init_loc": "PARK"
+    "init_loc": "VOID_UPPER"
   },
   "DONUT": {
     "name": "jelly donut",
@@ -193,7 +194,7 @@
   "LUNCHBOX": {
     "name": "lunchbox",
     "long_desc": "old tin spiderman lunchbox",
-    "words": ["BOX", "LUNCHBOX"],
+    "words": ["BOX", "LUNCHBOX", "LUNCH"],
     "adjectives":["SPIDERMAN", "TIN", "OLD"],
     "takeable?": true,
     "openable?": true,

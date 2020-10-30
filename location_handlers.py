@@ -34,6 +34,8 @@
 #   * "touched?" = True if the player has seen the look description in this room (with light source)
 #       - It's fine to check it, but PLEASE DON'T SET "touched?"!
 
+import random
+
 def EnterGarden(context, first_time):
   if first_time:
     context.events.PrintBelow("You hear an owl hooting from the shed.")
@@ -189,7 +191,25 @@ def WoodsHandler(context, action, item1, item2):
             context.Print("You cross a path perpendicularly and re-enter the woods on the other side.\n")
     return False
 
+def LostHandler(context, action, item1, item2):
+    if action["key"] in ["NORTH", "SOUTH", "EAST", "WEST", "NORTHEAST", "NORTHWEST", "SOUTHEAST", "SOUTHWEST"]:
+        ##Move items in lost room to VOID_UPPER 
+        if random.randint(1, 6) == 1:
+          context.Print("You make your way out of the woods.\n")
+          context.locations.EnterRoom("WOODS_12")
+        else:
+          context.Print("You are still lost.")
+        return True
+    return False
 
+def ParkLook(context):
+    context.Print(context.locations["PARK"]["long_desc"] + "\n")
+    print_string = "There is a trailhead sign here."
+    if not context.items["SIGN"]["contents"]:
+        context.Print(print_string)
+    else:
+        context.Print(print_string + " Attached to the sign are the following papers:")
+        context.items.ListItems(context.items["SIGN"]["contents"], indent=2)
 
 # Here is where you "bind" your item handler function to a specific item.
 def Register(context):
@@ -229,7 +249,8 @@ def Register(context):
     locations.AddWhenHereHandler("WOODS_2", WoodsHandler)
     locations.AddWhenHereHandler("WOODS_1", WoodsHandler)
     locations.AddLookHandler("WOODS_9", FireSwamp)
-
+    locations.AddLookHandler("PARK", ParkLook)
+    locations.AddWhenHereHandler("LOST", LostHandler)
 
 
 

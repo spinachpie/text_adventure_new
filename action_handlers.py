@@ -231,7 +231,7 @@ def Chicken(context):
     context.player.Kill()
 
 def Credits(context):
-    context.Print("\n Thank you for playing 'ERIK_GAME'\n\nStory: Erik\nCharacters: Erik\nAll the hard coding stuff: All Erik\nSound Design: Erik \nThat cool map: Erik (It was actually Erik and it took forever)\nPublishing: Erik Inc\n\nProud Sponsors: \nAir Erik\nMicrosoft \nThe Daily Bok\nThe Belgian Department of Agriculture\n\nSpecial Thanks To:\nFinn\nErik\nErik's hour and a half of \"PE\" class\nTomas (He helped a tiny bit)")
+    context.Print("\n Thank you for playing 'ERIK_GAME'\n\nStory: Erik\nCharacters: Erik\nAll the hard coding stuff: All Erik\nSound Design: Erik \nThat cool map: Erik (It was actually Erik and it took forever)\nSpecial FX: Erik\nPublishing: Erik Inc\n\nProud Sponsors: \nAir Erik\nMicrosoft \nThe Daily Bok\nThe Belgian Department of Agriculture\n\nSpecial Thanks To:\nErik\nFinn\nErik's hour and a half of \"PE\" class\nTomas (He helped a tiny bit)")
 
 # Here is where you "bind" your action handler function to a specific action.
 def Register(context):
