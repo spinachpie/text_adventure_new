@@ -139,7 +139,7 @@ def ElevatorMiddleLook(context):
     context.Print(look_string)
 
 def ElevatorBottomLook(context):
-    look_string = "This hallway is full of pipes that stick out of the walls and ceilings and continue down the passageway to the north. A bad smell comes out of room that sits to the south. To the east is an elevator door, and a call button sits next to it. The elevator door is "
+    look_string = "This hallway is full of pipes that stick out of the walls and ceilings and continue down the passageway to the north. A bad smell comes out of a room that sits to the south. To the east is an elevator door, and a call button sits next to it. The elevator door is "
     if (context.items["ELEVATOR_DOOR"].get("is_open?")) and (context.locations["ELEVATOR1"]["elevator_level"] == 1):
         look_string += "open."
     else:

@@ -49,6 +49,12 @@
     "takeable?": true,
     "init_loc": "VOID_BASEMENT"
   },
+  "KNIFE": {
+    "name": "knife",
+    "words": ["KNIFE"],
+    "takeable?": true,
+    "init_loc": "BUNKER_JAIL"
+  },
   "SIGN": {
     "name": "trailhead sign",
     "words": ["SIGN"],
